@@ -93,7 +93,8 @@ export const UIS: Ui[] = [
       { kind: "chip", text: "B3 sensor silent" },
       { kind: "text", text: "14:32", quiet: true },
       { kind: "gear" },
-      { kind: "presses", items: ["ON", "STOP", "OFF"], at: "ON" },
+      { kind: "power", on: true },
+      { kind: "stop" },
     ],
   },
   {

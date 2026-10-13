@@ -114,10 +114,12 @@ export const bandStyles = css`
     padding: 0.45rem 0.7rem;
     cursor: pointer;
   }
-  .power.on::part(base) {
-    background: var(--band-ink);
-    color: var(--rail-group);
-    border-radius: 4px;
+  .band sl-icon-button.stop {
+    font-size: 1.9rem;
+  }
+  .band sl-icon-button.stop::part(base),
+  .band sl-icon-button.stop::part(base):hover {
+    color: #ef4444;
   }
 `;
 
@@ -135,15 +137,11 @@ export function bandRight(items: BandItem[]) {
           ><sl-icon-button name="gear" label="Settings"></sl-icon-button
         ></sl-tooltip>`;
       case "power":
-        return html`<sl-tooltip content="Track power"
-          ><sl-icon-button
-            class="power ${item.on ? "on" : ""}"
-            name="power"
-            label="Track power"
-          ></sl-icon-button
-        ></sl-tooltip>`;
+        return html`<proto-power ?on=${item.on}></proto-power>`;
       case "stop":
-        return html`<button class="stopchip">STOP</button>`;
+        return html`<sl-tooltip content="Stop every train"
+          ><sl-icon-button class="stop" name="sign-stop-fill" label="Stop"></sl-icon-button
+        ></sl-tooltip>`;
       case "presses":
         return html`<span class="presses"
           >${item.items.map(
@@ -156,6 +154,34 @@ export function bandRight(items: BandItem[]) {
     }
   });
 }
+
+/** Track power: one toggle, the power glyph green when on, dimmed when off. */
+export class ProtoPower extends LitElement {
+  static properties = { on: { type: Boolean, reflect: true } };
+  on = false;
+  static styles = css`
+    sl-icon-button {
+      font-size: 1.5rem;
+      transition: transform 0.1s;
+    }
+    sl-icon-button:hover {
+      transform: scale(1.1);
+    }
+    sl-icon-button::part(base) {
+      color: rgba(255, 255, 255, 0.55);
+    }
+    :host([on]) sl-icon-button::part(base) {
+      color: #4ade80;
+    }
+  `;
+  render() {
+    const label = this.on ? "Track power is on; turn it off" : "Track power is off; turn it on";
+    return html`<sl-tooltip content=${label}
+      ><sl-icon-button name="power" label=${label} @click=${() => (this.on = !this.on)}></sl-icon-button
+    ></sl-tooltip>`;
+  }
+}
+customElements.define("proto-power", ProtoPower);
 
 /**
  * occupancy's rail: 78px, shadow, groups on --rail-group with radius 8,
