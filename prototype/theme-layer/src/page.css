@@ -1,0 +1,19 @@
+/* The look rules' tokens, from rails49/.github docs/tokens.css. */
+:root {
+  --band: #1d4ed8;
+  --band-ink: #ffffff;
+  --rail: #064e3b;
+  --rail-group: #059669;
+  --stop: #f7dcdf;
+  --stop-ink: #cc2936;
+  --rail-button: 44px;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  font-family: var(--sl-font-sans);
+  background: var(--sl-color-neutral-0);
+  color: var(--sl-color-neutral-900);
+}

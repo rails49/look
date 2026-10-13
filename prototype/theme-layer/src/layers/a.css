@@ -1,0 +1,13 @@
+/* A: Shoelace as shipped. The layer sets nothing; the dialog shell is
+   sl-dialog with its own header and close, footer buttons on the right. */
+.dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--sl-spacing-x-small);
+}
+sl-dialog.small {
+  --width: 420px;
+}
+sl-dialog.medium {
+  --width: 500px;
+}
