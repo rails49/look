@@ -61,7 +61,7 @@ the elements.
 
 ```sh
 look-check src index.html                                   # a built UI
-pnpm dlx github:rails49/look#v0.1.0 look-check page          # a static page
+pnpm --package=github:rails49/look#v0.1.0 dlx look-check page  # a static page
 ```
 
 It fails on a selector naming a `look-` element, on setting a package token or
