@@ -74,3 +74,7 @@ pnpm install
 pnpm check && pnpm test && pnpm build   # commit dist/ with the source
 pnpm dev                                # index.html, the chrome in a browser
 ```
+
+A release is a `v*` tag, pushed after looking at the chrome with `pnpm dev`.
+`.github/workflows/release.yml` then opens a bump pull request in each consumer
+that takes look, and waits for each to merge itself on a green gate.

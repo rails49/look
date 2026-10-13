@@ -1,0 +1,91 @@
+name: release
+
+on:
+  push:
+    tags: ['v*']
+
+concurrency: release
+
+permissions:
+  contents: read
+
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - id: app
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ vars.LOOK_APP_ID }}
+          private-key: ${{ secrets.LOOK_APP_KEY }}
+          owner: rails49
+          repositories: control,occupancy,dccex,rails49.org,installation
+      - name: open a bump pull request in each consumer
+        env:
+          GH_TOKEN: ${{ steps.app.outputs.token }}
+          SLUG: ${{ steps.app.outputs.app-slug }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          id=$(gh api "/users/${SLUG}[bot]" --jq .id)
+          git config --global user.name "${SLUG}[bot]"
+          git config --global user.email "${id}+${SLUG}[bot]@users.noreply.github.com"
+          corepack enable
+          : > "$RUNNER_TEMP/prs"
+          for repo in control occupancy dccex rails49.org installation; do
+            dir=$RUNNER_TEMP/$repo
+            git clone -q "https://x-access-token:${GH_TOKEN}@github.com/rails49/$repo" "$dir"
+            # An open bump pull request is updated in place, keeping any fix pushed to it.
+            url=$(gh pr list -R "rails49/$repo" --head look/bump --json url --jq '.[0].url // ""')
+            if [ -n "$url" ]; then git -C "$dir" switch -q look/bump; else git -C "$dir" switch -q -C look/bump; fi
+            if [ -z "$(node scripts/bump.ts "$dir" "$TAG")" ]; then
+              echo "$repo: skipped, it does not take look or is already at $TAG"
+              continue
+            fi
+            for lock in $(git -C "$dir" ls-files '*pnpm-lock.yaml'); do
+              if grep -q 'rails49/look' "$dir/$lock"; then
+                (cd "$dir/$(dirname "$lock")" && COREPACK_ENABLE_DOWNLOAD_PROMPT=0 pnpm install --lockfile-only)
+              fi
+            done
+            git -C "$dir" commit -qam "Bump look to $TAG"
+            git -C "$dir" push -qf origin look/bump
+            body="Moves look to [$TAG](https://github.com/rails49/look/tree/$TAG). Merges itself when the gate is green."
+            if [ -n "$url" ]; then
+              gh pr edit "$url" --title "Bump look to $TAG" --body "$body"
+            else
+              url=$(gh pr create -R "rails49/$repo" --head look/bump --title "Bump look to $TAG" --body "$body")
+            fi
+            if gh pr merge "$url" --auto --squash; then
+              echo "$url" >> "$RUNNER_TEMP/prs"
+            else
+              echo "::error::$url: auto-merge could not be turned on"
+              touch "$RUNNER_TEMP/failed"
+            fi
+          done
+      - name: wait for each bump pull request to merge
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          deadline=$((SECONDS + 3600))
+          failed=0
+          if [ -e "$RUNNER_TEMP/failed" ]; then failed=1; fi
+          for url in $(cat "$RUNNER_TEMP/prs"); do
+            while :; do
+              read -r state failing < <(gh pr view "$url" --json state,statusCheckRollup --jq \
+                '[.state, ([.statusCheckRollup[] | select(.conclusion == "FAILURE" or .conclusion == "CANCELLED" or .conclusion == "TIMED_OUT" or .state == "FAILURE" or .state == "ERROR")] | length)] | @tsv')
+              if [ "$state" = MERGED ]; then echo "$url merged"; break; fi
+              if [ "$state" = CLOSED ] || [ "$failing" -gt 0 ] || [ $SECONDS -gt $deadline ]; then
+                echo "::error::$url did not merge"
+                failed=1
+                break
+              fi
+              sleep 30
+            done
+          done
+          exit $failed
