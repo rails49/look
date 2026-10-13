@@ -4,12 +4,14 @@ import { chromeTokens } from './chrome.ts';
 import { TURN_HEIGHT_PX } from './tokens.ts';
 
 /**
- * A group of commands on the rail. `end` pins it to the rail's far end.
+ * A group of commands on the rail. `label` names it to a screen reader; `end`
+ * pins it to the rail's far end.
  *
  * @slot - The `look-command`s.
  */
 @customElement('look-group')
 export class LookGroup extends LitElement {
+  @property() label = '';
   @property({ type: Boolean, reflect: true }) end = false;
 
   static override styles = [
@@ -45,6 +47,16 @@ export class LookGroup extends LitElement {
       }
     `,
   ];
+
+  override connectedCallback() {
+    super.connectedCallback();
+    this.setAttribute('role', 'group');
+  }
+
+  override updated() {
+    if (this.label) this.setAttribute('aria-label', this.label);
+    else this.removeAttribute('aria-label');
+  }
 
   override render() {
     return html`<slot></slot>`;

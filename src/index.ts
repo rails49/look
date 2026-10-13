@@ -16,4 +16,4 @@ export { LookCommand } from './look-command.ts';
 export { LookDialog } from './look-dialog.ts';
 export { lookTheme } from './theme.ts';
 export { TOKENS, TURN_HEIGHT_PX } from './tokens.ts';
-export type { LookPressDetail, LookPowerDetail, LookViewDetail, PowerState } from './events.ts';
+export type { LookPressDetail, LookPowerDetail, LookViewDetail, PowerShown, PowerState } from './events.ts';

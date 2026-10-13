@@ -9,13 +9,15 @@ import { customElement, property } from 'lit/decorators.js';
 import { chromeTokens } from "./chrome.js";
 import { TURN_HEIGHT_PX } from "./tokens.js";
 /**
- * A group of commands on the rail. `end` pins it to the rail's far end.
+ * A group of commands on the rail. `label` names it to a screen reader; `end`
+ * pins it to the rail's far end.
  *
  * @slot - The `look-command`s.
  */
 let LookGroup = class LookGroup extends LitElement {
     constructor() {
         super(...arguments);
+        this.label = '';
         this.end = false;
     }
     static { this.styles = [
@@ -51,10 +53,23 @@ let LookGroup = class LookGroup extends LitElement {
       }
     `,
     ]; }
+    connectedCallback() {
+        super.connectedCallback();
+        this.setAttribute('role', 'group');
+    }
+    updated() {
+        if (this.label)
+            this.setAttribute('aria-label', this.label);
+        else
+            this.removeAttribute('aria-label');
+    }
     render() {
         return html `<slot></slot>`;
     }
 };
+__decorate([
+    property()
+], LookGroup.prototype, "label", void 0);
 __decorate([
     property({ type: Boolean, reflect: true })
 ], LookGroup.prototype, "end", void 0);

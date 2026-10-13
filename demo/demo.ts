@@ -54,8 +54,13 @@ document.addEventListener('look-view', (e) => {
   for (const v of document.querySelectorAll('look-view')) v.current = v.name === e.detail.name;
 });
 
+// Off drains first, as control does: power goes off once every train is at rest.
+let drained: ReturnType<typeof setTimeout> | undefined;
 document.addEventListener('look-power', (e) => {
-  document.querySelector('look-power')!.state = e.detail.state;
+  const power = document.querySelector('look-power')!;
+  clearTimeout(drained);
+  power.state = e.detail.state === 'off' ? 'draining' : e.detail.state;
+  if (power.state === 'draining') drained = setTimeout(() => (power.state = 'off'), 3000);
 });
 
 declare global {

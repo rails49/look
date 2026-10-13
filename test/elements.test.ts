@@ -93,6 +93,13 @@ describe('presses', () => {
   });
 });
 
+describe('look-group', () => {
+  it('is a group named by its label', async () => {
+    const group = await mount('<look-group label="Edit"></look-group>', 'look-group');
+    expect([group.getAttribute('role'), group.getAttribute('aria-label')]).toEqual(['group', 'Edit']);
+  });
+});
+
 describe('views', () => {
   it('fires look-view with the name, and nothing for the current view', async () => {
     const rail = await mount(
@@ -130,6 +137,12 @@ describe('look-power', () => {
     expect(await press('stopped', '.power')).toEqual(['on']);
   });
 
+  it('asks for on while draining, and keeps the stop sign live', async () => {
+    expect(await press('draining', '.power')).toEqual(['on']);
+    expect(await press('draining', '.stop')).toEqual(['stopped']);
+    expect(inner(document.querySelector('look-power')!, 'sl-tooltip').getAttribute('content')).toMatch(/^Draining/);
+  });
+
   it('asks for stopped from the stop sign', async () => {
     expect(await press('on', '.stop')).toEqual(['stopped']);
   });
@@ -154,6 +167,26 @@ describe('look-dialog', () => {
     await d.hide();
     expect(d.open).toBe(false);
     expect(inner(dialog, '.footer slot[name=footer]')).not.toBeNull();
+  });
+
+  it('opens from the open attribute', async () => {
+    const dialog = await mount('<look-dialog label="Settings" open></look-dialog>', 'look-dialog');
+    expect((inner(dialog, 'sl-dialog') as unknown as { open: boolean }).open).toBe(true);
+  });
+
+  it('turns open false when the person closes it, and not for a widget inside hiding', async () => {
+    const dialog = await mount('<look-dialog label="Settings"><sl-input></sl-input></look-dialog>', 'look-dialog');
+    const d = dialog as unknown as LitElement & { open: boolean };
+    const shown = new Promise((r) => dialog.addEventListener('sl-after-show', r, { once: true }));
+    d.open = true;
+    await shown;
+
+    document.querySelector('sl-input')!.dispatchEvent(new CustomEvent('sl-hide', { bubbles: true, composed: true }));
+    expect(d.open).toBe(true);
+
+    await (inner(dialog, 'sl-dialog') as unknown as { hide(): Promise<void> }).hide();
+    await d.updateComplete;
+    expect(dialog.hasAttribute('open')).toBe(false);
   });
 });
 

@@ -10,6 +10,9 @@ export interface LookViewDetail {
 
 export type PowerState = 'on' | 'off' | 'stopped';
 
+/** What `look-power` shows: a state asked for, or the app turning power off once trains are at rest. */
+export type PowerShown = PowerState | 'draining';
+
 /** What `look-power` carries: the state asked for. */
 export interface LookPowerDetail {
   readonly state: PowerState;

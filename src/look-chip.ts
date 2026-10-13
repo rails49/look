@@ -3,7 +3,8 @@ import { customElement } from 'lit/decorators.js';
 import { chromeTokens } from './chrome.ts';
 
 /**
- * A fault on the band, in red: "station not reachable".
+ * A fault on the band, in red: "station not reachable". A long one is cut
+ * short with "…"; give it a `title` to show the whole sentence.
  *
  * @slot - The fault.
  */
@@ -13,6 +14,11 @@ export class LookChip extends LitElement {
     chromeTokens,
     css`
       :host {
+        display: inline-block;
+        max-width: 20rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        vertical-align: middle;
         white-space: nowrap;
         background: var(--stop);
         color: var(--band-ink);

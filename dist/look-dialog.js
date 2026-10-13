@@ -11,8 +11,10 @@ import { chromeTokens } from "./chrome.js";
 import { lookTheme } from "./theme.js";
 /**
  * The dialog shell: a header on the band's blue with a white close, the body,
- * and a grey footer with its buttons on the right. Shoelace's `sl-*` events
- * pass through; `sl-request-close` can be cancelled as on `sl-dialog`.
+ * and a grey footer with its buttons on the right. `open` shows it, set by the
+ * app or by `show()` and `hide()`; it turns false when the person closes it.
+ * Shoelace's `sl-*` events pass through; `sl-request-close` can be cancelled
+ * as on `sl-dialog`.
  *
  * @slot - The body.
  * @slot footer - The buttons.
@@ -22,6 +24,7 @@ let LookDialog = class LookDialog extends LitElement {
         super(...arguments);
         this.label = '';
         this.size = 'medium';
+        this.open = false;
     }
     static { this.styles = [
         chromeTokens,
@@ -42,9 +45,6 @@ let LookDialog = class LookDialog extends LitElement {
       }
     `,
     ]; }
-    get open() {
-        return this.dialog?.open ?? false;
-    }
     async show() {
         await this.updateComplete;
         return this.dialog.show();
@@ -53,8 +53,13 @@ let LookDialog = class LookDialog extends LitElement {
         await this.updateComplete;
         return this.dialog.hide();
     }
+    // Only the dialog's own sl-show and sl-hide: a slotted widget's pass through it too.
+    follow(e) {
+        if (e.target === e.currentTarget)
+            this.open = e.type === 'sl-show';
+    }
     render() {
-        return html `<sl-dialog label=${this.label}>
+        return html `<sl-dialog label=${this.label} ?open=${this.open} @sl-show=${this.follow} @sl-hide=${this.follow}>
       <slot></slot>
       <div slot="footer" class="footer"><slot name="footer"></slot></div>
     </sl-dialog>`;
@@ -66,6 +71,9 @@ __decorate([
 __decorate([
     property({ reflect: true })
 ], LookDialog.prototype, "size", void 0);
+__decorate([
+    property({ type: Boolean, reflect: true })
+], LookDialog.prototype, "open", void 0);
 __decorate([
     query('sl-dialog')
 ], LookDialog.prototype, "dialog", void 0);

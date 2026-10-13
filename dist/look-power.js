@@ -15,11 +15,13 @@ const POWER_TIP = {
     on: 'Track power is on; turn it off',
     off: 'Track power is off; turn it on',
     stopped: 'Stopped; turn track power on',
+    draining: 'Draining: power goes off when every train is at rest; keep it on',
 };
 /**
  * Track power: a toggle and a stop sign. The power glyph is green when on,
- * dimmed when off and red when stopped. Pressing it asks for `off` when on and
- * for `on` otherwise; the stop sign asks for `stopped`. A `reason` disables
+ * pulses green while draining, is dimmed when off and red when stopped.
+ * Pressing it asks for `off` when on and for `on` otherwise; the stop sign
+ * asks for `stopped`. A `reason` disables
  * both and is their tooltip. The app sets `state` from what the station says.
  *
  * @fires look-power - Detail: the state asked for.
@@ -68,6 +70,17 @@ let LookPower = class LookPower extends LitElement {
 
       :host([state='on']) .power::part(base) {
         color: var(--power-on);
+      }
+
+      :host([state='draining']) .power::part(base) {
+        color: var(--power-on);
+        animation: pulse 1.2s ease-in-out infinite;
+      }
+
+      @keyframes pulse {
+        50% {
+          opacity: 0.4;
+        }
       }
 
       :host([state='stopped']) .power::part(base) {

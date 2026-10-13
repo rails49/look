@@ -7,8 +7,10 @@ import { lookTheme } from './theme.ts';
 
 /**
  * The dialog shell: a header on the band's blue with a white close, the body,
- * and a grey footer with its buttons on the right. Shoelace's `sl-*` events
- * pass through; `sl-request-close` can be cancelled as on `sl-dialog`.
+ * and a grey footer with its buttons on the right. `open` shows it, set by the
+ * app or by `show()` and `hide()`; it turns false when the person closes it.
+ * Shoelace's `sl-*` events pass through; `sl-request-close` can be cancelled
+ * as on `sl-dialog`.
  *
  * @slot - The body.
  * @slot footer - The buttons.
@@ -17,6 +19,7 @@ import { lookTheme } from './theme.ts';
 export class LookDialog extends LitElement {
   @property() label = '';
   @property({ reflect: true }) size: 'small' | 'medium' = 'medium';
+  @property({ type: Boolean, reflect: true }) open = false;
 
   @query('sl-dialog') private dialog!: SlDialog;
 
@@ -40,10 +43,6 @@ export class LookDialog extends LitElement {
     `,
   ];
 
-  get open() {
-    return this.dialog?.open ?? false;
-  }
-
   async show() {
     await this.updateComplete;
     return this.dialog.show();
@@ -54,8 +53,13 @@ export class LookDialog extends LitElement {
     return this.dialog.hide();
   }
 
+  // Only the dialog's own sl-show and sl-hide: a slotted widget's pass through it too.
+  private follow(e: Event) {
+    if (e.target === e.currentTarget) this.open = e.type === 'sl-show';
+  }
+
   override render() {
-    return html`<sl-dialog label=${this.label}>
+    return html`<sl-dialog label=${this.label} ?open=${this.open} @sl-show=${this.follow} @sl-hide=${this.follow}>
       <slot></slot>
       <div slot="footer" class="footer"><slot name="footer"></slot></div>
     </sl-dialog>`;
