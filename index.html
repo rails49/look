@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>look demo</title>
+    <link rel="stylesheet" href="/dist/look.css" />
+    <link rel="stylesheet" href="/demo/demo.css" />
+    <script type="module" src="/demo/demo.ts"></script>
+  </head>
+  <body>
+    <look-shell>
+      <look-band>
+        <look-about name="otira" detail="N scale" pressable></look-about>
+        <look-reading>3 trains</look-reading>
+        <look-chip>station not reachable</look-chip>
+        <look-dot state="up">broker</look-dot>
+        <look-band-press icon="github" label="Source on GitHub"></look-band-press>
+        <look-gear></look-gear>
+        <look-power state="on"></look-power>
+      </look-band>
+      <look-rail>
+        <look-view name="edit" icon="pencil" label="Edit" current></look-view>
+        <look-view name="run" icon="stoplights" label="Run"></look-view>
+        <look-view name="throttle" icon="throttle" label="Throttle"></look-view>
+        <look-view name="stock" icon="train-freight-front" label="Stock"></look-view>
+        <look-group>
+          <look-command icon="floppy" label="Save" key="Mod+S"></look-command>
+          <look-command icon="arrow-counterclockwise" label="Undo" key="Mod+Z"></look-command>
+          <look-command icon="arrow-clockwise" label="Redo" key="Shift+Mod+Z" disabled></look-command>
+        </look-group>
+        <look-group>
+          <look-command icon="rotate" label="Rotate" key="R" pressed></look-command>
+          <look-command icon="symmetry-vertical" label="Flip"></look-command>
+        </look-group>
+        <look-group end>
+          <look-command word="HOLD" label="Hold every train"></look-command>
+        </look-group>
+      </look-rail>
+      <demo-pane></demo-pane>
+    </look-shell>
+  </body>
+</html>

@@ -1,0 +1,41 @@
+{
+  "name": "@rails49/look",
+  "version": "0.1.0",
+  "description": "The chrome shared by rails49's UIs: band, rail, dialog shell and the Shoelace theme layer.",
+  "license": "MIT",
+  "type": "module",
+  "packageManager": "pnpm@11.0.4",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./look.css": "./dist/look.css",
+    "./look.bundle.js": "./dist/look.bundle.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "bin": {
+    "look-check": "dist/look-check.js"
+  },
+  "scripts": {
+    "check": "tsc --noEmit",
+    "test": "vitest run",
+    "build": "rm -rf dist && tsc -p tsconfig.build.json && node scripts/build-css.ts && vite build",
+    "dev": "vite"
+  },
+  "peerDependencies": {
+    "@shoelace-style/shoelace": "^2.20.1",
+    "lit": "^3.2.1"
+  },
+  "devDependencies": {
+    "@shoelace-style/shoelace": "^2.20.1",
+    "@types/node": "^24.0.0",
+    "happy-dom": "^20.14.5",
+    "lit": "^3.3.2",
+    "typescript": "^5.9.3",
+    "vite": "^6.4.2",
+    "vitest": "^3.2.0"
+  }
+}

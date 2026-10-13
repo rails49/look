@@ -1,0 +1,166 @@
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import '../src/index.ts';
+import type { LitElement } from 'lit';
+import { libraryOf } from '../src/icons.ts';
+
+async function mount<T extends Element = HTMLElement>(markup: string, selector: string): Promise<T> {
+  document.body.innerHTML = markup;
+  const all = [...document.body.querySelectorAll('*')] as LitElement[];
+  await Promise.all(all.map((el) => el.updateComplete));
+  return document.querySelector(selector) as T;
+}
+
+const inner = (el: Element, selector: string) => el.shadowRoot!.querySelector(selector) as HTMLElement;
+
+afterEach(() => {
+  document.body.innerHTML = '';
+});
+
+describe('placement', () => {
+  it('puts each element in its slot with no slot attribute from the app', async () => {
+    const shell = await mount(
+      `<look-shell>
+        <look-band><look-about name="otira"></look-about><look-reading>3 trains</look-reading><look-gear></look-gear><look-power></look-power></look-band>
+        <look-rail><look-view name="run"></look-view><look-group></look-group></look-rail>
+        <main>work</main>
+      </look-shell>`,
+      'look-shell',
+    );
+    const slotOf = (s: string) => document.querySelector(s)!.slot;
+    expect([slotOf('look-band'), slotOf('look-rail'), slotOf('main')]).toEqual(['band', 'rail', '']);
+    expect([slotOf('look-about'), slotOf('look-reading'), slotOf('look-gear'), slotOf('look-power')]).toEqual([
+      'about',
+      '',
+      'gear',
+      'power',
+    ]);
+    expect([slotOf('look-view'), slotOf('look-group')]).toEqual(['views', '']);
+    expect(shell.shadowRoot).not.toBeNull();
+  });
+
+  it('keeps a slot the app wrote', async () => {
+    await mount('<look-band><look-gear slot="about"></look-gear></look-band>', 'look-band');
+    expect(document.querySelector('look-gear')!.slot).toBe('about');
+  });
+});
+
+describe('presses', () => {
+  it('fires look-press with the Shift key from a command, and nothing when disabled', async () => {
+    const cmd = await mount('<look-command icon="floppy" label="Save" key="Mod+S"></look-command>', 'look-command');
+    const seen = vi.fn();
+    document.body.addEventListener('look-press', (e) => seen(e.target, e.detail));
+    inner(cmd, 'sl-icon-button').dispatchEvent(new MouseEvent('click', { shiftKey: true, bubbles: true }));
+    expect(seen).toHaveBeenCalledWith(cmd, { shiftKey: true });
+
+    seen.mockClear();
+    (cmd as unknown as { disabled: boolean }).disabled = true;
+    await (cmd as unknown as LitElement).updateComplete;
+    inner(cmd, 'sl-icon-button').dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    expect(seen).not.toHaveBeenCalled();
+  });
+
+  it('shows the label and key in the tooltip', async () => {
+    const cmd = await mount('<look-command icon="arrow-counterclockwise" label="Undo" key="Mod+Z"></look-command>', 'look-command');
+    expect(inner(cmd, 'sl-tooltip').getAttribute('content')).toMatch(/^Undo {2}(⌘Z|Ctrl\+Z)$/);
+  });
+
+  it('draws a word command as a button', async () => {
+    const cmd = await mount('<look-command word="HOLD" label="Hold every train"></look-command>', 'look-command');
+    expect(inner(cmd, 'button').textContent!.trim()).toBe('HOLD');
+  });
+
+  it('fires look-press from the gear, a band press and a pressable about', async () => {
+    const band = await mount(
+      `<look-band>
+        <look-about name="otira" pressable></look-about>
+        <look-band-press word="GO"></look-band-press>
+        <look-gear></look-gear>
+      </look-band>`,
+      'look-band',
+    );
+    const seen: string[] = [];
+    band.addEventListener('look-press', (e) => seen.push((e.target as Element).localName));
+    inner(document.querySelector('look-about')!, 'button').click();
+    inner(document.querySelector('look-band-press')!, 'button').click();
+    inner(document.querySelector('look-gear')!, 'sl-icon-button').click();
+    expect(seen).toEqual(['look-about', 'look-band-press', 'look-gear']);
+  });
+
+  it('draws an about that is not pressable as text', async () => {
+    const about = await mount('<look-about name="otira" detail="N scale"></look-about>', 'look-about');
+    expect(inner(about, 'button')).toBeNull();
+    expect(inner(about, '.about').textContent).toContain('N scale');
+  });
+});
+
+describe('views', () => {
+  it('fires look-view with the name, and nothing for the current view', async () => {
+    const rail = await mount(
+      '<look-rail><look-view name="run" label="Run" current></look-view><look-view name="edit" label="Edit"></look-view></look-rail>',
+      'look-rail',
+    );
+    const seen: string[] = [];
+    rail.addEventListener('look-view', (e) => seen.push(e.detail.name));
+    const [run, edit] = document.querySelectorAll('look-view');
+    inner(run!, 'button').click();
+    inner(edit!, 'button').click();
+    expect(seen).toEqual(['edit']);
+    expect(inner(run!, 'button').getAttribute('aria-current')).toBe('page');
+  });
+
+  it('hides the views group when there are no views', async () => {
+    const rail = await mount('<look-rail><look-group></look-group></look-rail>', 'look-rail');
+    await new Promise((r) => setTimeout(r));
+    expect(inner(rail, '.views').hidden).toBe(true);
+  });
+});
+
+describe('look-power', () => {
+  const press = async (state: string, which: string, reason = '') => {
+    const power = await mount(`<look-power state="${state}" reason="${reason}"></look-power>`, 'look-power');
+    const seen: string[] = [];
+    power.addEventListener('look-power', (e) => seen.push(e.detail.state));
+    inner(power, which).click();
+    return seen;
+  };
+
+  it('asks for off when on, and for on when off or stopped', async () => {
+    expect(await press('on', '.power')).toEqual(['off']);
+    expect(await press('off', '.power')).toEqual(['on']);
+    expect(await press('stopped', '.power')).toEqual(['on']);
+  });
+
+  it('asks for stopped from the stop sign', async () => {
+    expect(await press('on', '.stop')).toEqual(['stopped']);
+  });
+
+  it('asks for nothing while a reason holds it, and shows the reason', async () => {
+    expect(await press('on', '.power', 'no station')).toEqual([]);
+    expect(await press('on', '.stop', 'no station')).toEqual([]);
+    expect(inner(document.querySelector('look-power')!, 'sl-tooltip').getAttribute('content')).toBe('no station');
+  });
+});
+
+describe('look-dialog', () => {
+  it('opens and closes, with the footer in the shell', async () => {
+    const dialog = await mount(
+      '<look-dialog label="Settings" size="small"><p>body</p><sl-button slot="footer">Close</sl-button></look-dialog>',
+      'look-dialog',
+    );
+    const d = dialog as unknown as { show(): Promise<void>; hide(): Promise<void>; open: boolean };
+    expect(d.open).toBe(false);
+    await d.show();
+    expect(d.open).toBe(true);
+    await d.hide();
+    expect(d.open).toBe(false);
+    expect(inner(dialog, '.footer slot[name=footer]')).not.toBeNull();
+  });
+});
+
+describe('icons', () => {
+  it('draws rails49 glyphs from the rails49 library and the rest from Bootstrap', () => {
+    expect(libraryOf('throttle')).toBe('rails49');
+    expect(libraryOf('rotate')).toBe('rails49');
+    expect(libraryOf('floppy')).toBe('default');
+  });
+});
