@@ -69,6 +69,34 @@ describe('presses', () => {
     expect(inner(cmd, 'button').textContent!.trim()).toBe('HOLD');
   });
 
+  it('keeps a disabled command with a reason hoverable, with the reason as its tooltip, and fires nothing', async () => {
+    const cmd = await mount(
+      '<look-command icon="car-front" label="Car" disabled reason="Calibrate first."></look-command>',
+      'look-command',
+    );
+    const seen = vi.fn();
+    cmd.addEventListener('look-press', seen);
+    const button = inner(cmd, 'sl-icon-button');
+    expect(button.hasAttribute('disabled')).toBe(false);
+    expect(button.classList.contains('off')).toBe(true);
+    expect(inner(cmd, 'sl-tooltip').getAttribute('content')).toBe('Calibrate first.');
+    button.click();
+    expect(seen).not.toHaveBeenCalled();
+  });
+
+  it('ignores a reason on an enabled command', async () => {
+    const cmd = await mount('<look-command icon="car-front" label="Car" reason="Calibrate first."></look-command>', 'look-command');
+    expect(inner(cmd, 'sl-tooltip').getAttribute('content')).toBe('Car');
+  });
+
+  it('sets aria-pressed on the button inside an icon command', async () => {
+    const cmd = await mount('<look-command icon="car-front" label="Car" pressed></look-command>', 'look-command');
+    const button = () => inner(cmd, 'sl-icon-button').shadowRoot!.querySelector('button')!;
+    await vi.waitFor(() => expect(button().getAttribute('aria-pressed')).toBe('true'));
+    (cmd as unknown as { pressed: boolean }).pressed = false;
+    await vi.waitFor(() => expect(button().hasAttribute('aria-pressed')).toBe(false));
+  });
+
   it('fires look-press from the gear, a band press and a pressable about', async () => {
     const band = await mount(
       `<look-band>
