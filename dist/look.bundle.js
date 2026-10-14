@@ -3788,7 +3788,7 @@ let j = class extends S {
         @click=${this.press}
       >
         ${this.word}
-      </button>` : $`<sl-tooltip content=${t} placement="right">
+      </button>` : $`<sl-tooltip content=${t} placement="right" hoist>
       <sl-icon-button
         name=${this.icon}
         library=${Jt(this.icon)}

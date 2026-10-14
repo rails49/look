@@ -147,7 +147,7 @@ export class LookCommand extends LitElement {
       >
         ${this.word}
       </button>`;
-    return html`<sl-tooltip content=${content} placement="right">
+    return html`<sl-tooltip content=${content} placement="right" hoist>
       <sl-icon-button
         name=${this.icon}
         library=${libraryOf(this.icon)}

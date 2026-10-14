@@ -84,6 +84,11 @@ describe('presses', () => {
     expect(seen).not.toHaveBeenCalled();
   });
 
+  it('hoists the tooltip so the rail does not clip it', async () => {
+    const cmd = await mount('<look-command icon="floppy" label="Save"></look-command>', 'look-command');
+    expect(inner(cmd, 'sl-tooltip').hasAttribute('hoist')).toBe(true);
+  });
+
   it('ignores a reason on an enabled command', async () => {
     const cmd = await mount('<look-command icon="car-front" label="Car" reason="Calibrate first."></look-command>', 'look-command');
     expect(inner(cmd, 'sl-tooltip').getAttribute('content')).toBe('Car');
