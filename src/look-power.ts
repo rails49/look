@@ -18,7 +18,8 @@ const POWER_TIP: Record<PowerShown, string> = {
  * pulses green while draining, is dimmed when off and red when stopped.
  * Pressing it asks for `off` when on and for `on` otherwise; the stop sign
  * asks for `stopped`. A `reason` disables
- * both and is their tooltip. The app sets `state` from what the station says.
+ * both and is their tooltip; a `toggle-reason` disables only the toggle. The
+ * app sets `state` from what the station says.
  *
  * @fires look-power - Detail: the state asked for.
  */
@@ -26,6 +27,7 @@ const POWER_TIP: Record<PowerShown, string> = {
 export class LookPower extends LitElement {
   @property({ reflect: true }) state: PowerShown = 'off';
   @property() reason = '';
+  @property({ attribute: 'toggle-reason' }) toggleReason = '';
 
   static override styles = [
     chromeTokens,
@@ -98,29 +100,29 @@ export class LookPower extends LitElement {
     place(this, 'power');
   }
 
-  private ask(state: PowerState) {
-    if (!this.reason) fire<LookPowerDetail>(this, 'look-power', { state });
+  private ask(state: PowerState, held: string) {
+    if (!held) fire<LookPowerDetail>(this, 'look-power', { state });
   }
 
   override render() {
-    const off = !!this.reason;
-    const powerTip = this.reason || POWER_TIP[this.state];
+    const toggleHeld = this.reason || this.toggleReason;
+    const powerTip = toggleHeld || POWER_TIP[this.state];
     const stopTip = this.reason || 'Stop every train';
     return html`
       <sl-tooltip content=${powerTip} placement="bottom">
         <sl-icon-button
-          class="power ${off ? 'off' : ''}"
+          class="power ${toggleHeld ? 'off' : ''}"
           name="power"
           label=${powerTip}
-          @click=${() => this.ask(this.state === 'on' ? 'off' : 'on')}
+          @click=${() => this.ask(this.state === 'on' ? 'off' : 'on', toggleHeld)}
         ></sl-icon-button>
       </sl-tooltip>
       <sl-tooltip content=${stopTip} placement="bottom">
         <sl-icon-button
-          class="stop ${off ? 'off' : ''}"
+          class="stop ${this.reason ? 'off' : ''}"
           name="sign-stop-fill"
           label=${stopTip}
-          @click=${() => this.ask('stopped')}
+          @click=${() => this.ask('stopped', this.reason)}
         ></sl-icon-button>
       </sl-tooltip>
     `;

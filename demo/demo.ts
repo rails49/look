@@ -4,6 +4,7 @@ import { LitElement, css, html } from 'lit';
 import { customElement, query } from 'lit/decorators.js';
 import '@shoelace-style/shoelace/dist/components/button/button.js';
 import '@shoelace-style/shoelace/dist/components/input/input.js';
+import '@shoelace-style/shoelace/dist/components/switch/switch.js';
 import { setBasePath } from '@shoelace-style/shoelace/dist/utilities/base-path.js';
 import { lookTheme, type LookDialog } from '../src/index.ts';
 
@@ -37,11 +38,19 @@ export class DemoPane extends LitElement {
         <sl-button size="small" variant="primary">Save</sl-button>
         <sl-button size="small">Cancel</sl-button>
       </div>
+      <p>
+        <sl-switch size="small" @sl-change=${this.silence}>Station silent: the toggle is held, STOP stays live</sl-switch>
+      </p>
       <look-dialog label="Settings" size="medium">
         <p>The dialog shell.</p>
         <sl-button slot="footer" @click=${() => this.dialog.hide()}>Close</sl-button>
       </look-dialog>
     `;
+  }
+
+  private silence(e: Event) {
+    const silent = (e.target as HTMLInputElement).checked;
+    document.querySelector('look-power')!.toggleReason = silent ? 'no station' : '';
   }
 }
 
