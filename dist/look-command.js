@@ -5,7 +5,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 import { LitElement, css, html, nothing, unsafeCSS } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { customElement, property, query } from 'lit/decorators.js';
 import '@shoelace-style/shoelace/dist/components/icon-button/icon-button.js';
 import '@shoelace-style/shoelace/dist/components/tooltip/tooltip.js';
 import { chromeTokens } from "./chrome.js";
@@ -16,8 +16,8 @@ import { TURN_HEIGHT_PX } from "./tokens.js";
 /**
  * A command on the rail: an icon with its label and key as the tooltip, or a
  * `word`. `pressed` marks the command that is in force, such as the editor's
- * current tool. A disabled command fires nothing. Binding the key is the
- * app's.
+ * current tool. A disabled command fires nothing; its `reason`, if set, is its
+ * tooltip. Binding the key is the app's.
  *
  * @fires look-press
  */
@@ -30,6 +30,7 @@ let LookCommand = class LookCommand extends LitElement {
         this.key = '';
         this.pressed = false;
         this.disabled = false;
+        this.reason = '';
     }
     static { this.styles = [
         chromeTokens,
@@ -57,12 +58,17 @@ let LookCommand = class LookCommand extends LitElement {
         color: rgba(255, 255, 255, 0.7);
       }
 
-      sl-icon-button:not([disabled]):hover {
+      sl-icon-button:not([disabled], .off):hover {
         transform: scale(1.1);
       }
 
-      sl-icon-button[disabled] {
+      sl-icon-button[disabled],
+      .off {
         opacity: 0.35;
+      }
+
+      .off::part(base) {
+        cursor: default;
       }
 
       :host([pressed]) sl-icon-button::part(base) {
@@ -120,8 +126,22 @@ let LookCommand = class LookCommand extends LitElement {
         if (!this.disabled)
             firePress(this, e);
     }
+    // sl-icon-button passes no aria-pressed to the button inside it.
+    async updated() {
+        if (!this.iconButton)
+            return;
+        await this.iconButton.updateComplete;
+        const button = this.iconButton.shadowRoot.querySelector('button');
+        if (this.pressed)
+            button.setAttribute('aria-pressed', 'true');
+        else
+            button.removeAttribute('aria-pressed');
+    }
     render() {
-        const content = tip(this.label, this.key);
+        // Not disabled when there is a reason: a disabled sl-icon-button takes no
+        // pointer events, and the tooltip has to open to say why.
+        const held = this.disabled && !!this.reason;
+        const content = held ? this.reason : tip(this.label, this.key);
         if (this.word)
             return html `<button
         ?disabled=${this.disabled}
@@ -131,12 +151,13 @@ let LookCommand = class LookCommand extends LitElement {
       >
         ${this.word}
       </button>`;
-        return html `<sl-tooltip content=${content} placement="right">
+        return html `<sl-tooltip content=${content} placement="right" hoist>
       <sl-icon-button
         name=${this.icon}
         library=${libraryOf(this.icon)}
         label=${this.label}
-        ?disabled=${this.disabled}
+        class=${held ? 'off' : ''}
+        ?disabled=${this.disabled && !held}
         @click=${this.press}
       ></sl-icon-button>
     </sl-tooltip>`;
@@ -160,6 +181,12 @@ __decorate([
 __decorate([
     property({ type: Boolean, reflect: true })
 ], LookCommand.prototype, "disabled", void 0);
+__decorate([
+    property()
+], LookCommand.prototype, "reason", void 0);
+__decorate([
+    query('sl-icon-button')
+], LookCommand.prototype, "iconButton", void 0);
 LookCommand = __decorate([
     customElement('look-command')
 ], LookCommand);
