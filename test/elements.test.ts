@@ -152,6 +152,17 @@ describe('look-power', () => {
     expect(await press('on', '.stop', 'no station')).toEqual([]);
     expect(inner(document.querySelector('look-power')!, 'sl-tooltip').getAttribute('content')).toBe('no station');
   });
+
+  it('holds only the toggle for a toggle reason, and keeps the stop sign live', async () => {
+    const power = await mount('<look-power state="off" toggle-reason="no station"></look-power>', 'look-power');
+    const seen: string[] = [];
+    power.addEventListener('look-power', (e) => seen.push(e.detail.state));
+    inner(power, '.power').click();
+    inner(power, '.stop').click();
+    expect(seen).toEqual(['stopped']);
+    const tips = [...power.shadowRoot!.querySelectorAll('sl-tooltip')].map((t) => t.getAttribute('content'));
+    expect(tips).toEqual(['no station', 'Stop every train']);
+  });
 });
 
 describe('look-dialog', () => {

@@ -7,13 +7,15 @@ import { type PowerShown } from './events.ts';
  * pulses green while draining, is dimmed when off and red when stopped.
  * Pressing it asks for `off` when on and for `on` otherwise; the stop sign
  * asks for `stopped`. A `reason` disables
- * both and is their tooltip. The app sets `state` from what the station says.
+ * both and is their tooltip; a `toggle-reason` disables only the toggle. The
+ * app sets `state` from what the station says.
  *
  * @fires look-power - Detail: the state asked for.
  */
 export declare class LookPower extends LitElement {
     state: PowerShown;
     reason: string;
+    toggleReason: string;
     static styles: import("lit").CSSResult[];
     connectedCallback(): void;
     private ask;

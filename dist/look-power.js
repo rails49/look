@@ -22,7 +22,8 @@ const POWER_TIP = {
  * pulses green while draining, is dimmed when off and red when stopped.
  * Pressing it asks for `off` when on and for `on` otherwise; the stop sign
  * asks for `stopped`. A `reason` disables
- * both and is their tooltip. The app sets `state` from what the station says.
+ * both and is their tooltip; a `toggle-reason` disables only the toggle. The
+ * app sets `state` from what the station says.
  *
  * @fires look-power - Detail: the state asked for.
  */
@@ -31,6 +32,7 @@ let LookPower = class LookPower extends LitElement {
         super(...arguments);
         this.state = 'off';
         this.reason = '';
+        this.toggleReason = '';
     }
     static { this.styles = [
         chromeTokens,
@@ -101,29 +103,29 @@ let LookPower = class LookPower extends LitElement {
         super.connectedCallback();
         place(this, 'power');
     }
-    ask(state) {
-        if (!this.reason)
+    ask(state, held) {
+        if (!held)
             fire(this, 'look-power', { state });
     }
     render() {
-        const off = !!this.reason;
-        const powerTip = this.reason || POWER_TIP[this.state];
+        const toggleHeld = this.reason || this.toggleReason;
+        const powerTip = toggleHeld || POWER_TIP[this.state];
         const stopTip = this.reason || 'Stop every train';
         return html `
       <sl-tooltip content=${powerTip} placement="bottom">
         <sl-icon-button
-          class="power ${off ? 'off' : ''}"
+          class="power ${toggleHeld ? 'off' : ''}"
           name="power"
           label=${powerTip}
-          @click=${() => this.ask(this.state === 'on' ? 'off' : 'on')}
+          @click=${() => this.ask(this.state === 'on' ? 'off' : 'on', toggleHeld)}
         ></sl-icon-button>
       </sl-tooltip>
       <sl-tooltip content=${stopTip} placement="bottom">
         <sl-icon-button
-          class="stop ${off ? 'off' : ''}"
+          class="stop ${this.reason ? 'off' : ''}"
           name="sign-stop-fill"
           label=${stopTip}
-          @click=${() => this.ask('stopped')}
+          @click=${() => this.ask('stopped', this.reason)}
         ></sl-icon-button>
       </sl-tooltip>
     `;
@@ -135,6 +137,9 @@ __decorate([
 __decorate([
     property()
 ], LookPower.prototype, "reason", void 0);
+__decorate([
+    property({ attribute: 'toggle-reason' })
+], LookPower.prototype, "toggleReason", void 0);
 LookPower = __decorate([
     customElement('look-power')
 ], LookPower);
