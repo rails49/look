@@ -3116,7 +3116,9 @@ function Ge(e) {
       aria-disabled=${e.disabled ? "true" : _}
       aria-description=${t || _}
       aria-pressed=${e.pressed ? "true" : _}
-      @click=${(o) => e.disabled || e.onPress(o)}
+      @click=${(o) => {
+    e.disabled || e.onPress(o);
+  }}
     >
       ${e.word || A`<sl-icon name=${e.icon} library=${es(e.icon)}></sl-icon>`}
     </button>

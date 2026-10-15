@@ -36,7 +36,9 @@ export function press(p: Press) {
       aria-disabled=${p.disabled ? 'true' : nothing}
       aria-description=${why || nothing}
       aria-pressed=${p.pressed ? 'true' : nothing}
-      @click=${(e: Event) => p.disabled || p.onPress(e)}
+      @click=${(e: Event) => {
+        if (!p.disabled) p.onPress(e);
+      }}
     >
       ${p.word || html`<sl-icon name=${p.icon!} library=${libraryOf(p.icon!)}></sl-icon>`}
     </button>

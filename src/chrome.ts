@@ -10,4 +10,3 @@ export const chromeTokens = css`
     ${unsafeCSS(tokenDeclarations)}
   }
 `;
-

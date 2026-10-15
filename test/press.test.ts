@@ -109,6 +109,7 @@ describe.each([command, commandWord, bandPress, bandWord, gear, powerToggle, pow
     const button = named(el, c.word ?? c.label);
     expect(tooltip(button)).toBe(c.label);
     expect(button.hasAttribute('aria-disabled')).toBe(false);
+    expect(button.hasAttribute('aria-pressed')).toBe(false);
     button.click();
     expect(seen).toHaveBeenCalledOnce();
   });
