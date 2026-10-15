@@ -1,6 +1,4 @@
 import { LitElement } from 'lit';
-import '@shoelace-style/shoelace/dist/components/icon-button/icon-button.js';
-import '@shoelace-style/shoelace/dist/components/tooltip/tooltip.js';
 /**
  * A command on the rail: an icon with its label and key as the tooltip, or a
  * `word`. `pressed` marks the command that is in force, such as the editor's
@@ -17,10 +15,17 @@ export declare class LookCommand extends LitElement {
     pressed: boolean;
     disabled: boolean;
     reason: string;
-    private iconButton?;
+    static shadowRootOptions: {
+        delegatesFocus: boolean;
+        clonable?: boolean;
+        customElementRegistry?: CustomElementRegistry;
+        mode: ShadowRootMode;
+        serializable?: boolean;
+        slotAssignment?: SlotAssignmentMode;
+    };
+    /** Presses the button, as a person would. */
+    click(): void;
     static styles: import("lit").CSSResult[];
-    private press;
-    updated(): Promise<void>;
     render(): import("lit").TemplateResult<1>;
 }
 declare global {

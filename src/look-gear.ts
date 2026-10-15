@@ -1,10 +1,9 @@
-import { LitElement, css, html } from 'lit';
+import { LitElement, css } from 'lit';
 import { customElement } from 'lit/decorators.js';
-import '@shoelace-style/shoelace/dist/components/icon-button/icon-button.js';
-import '@shoelace-style/shoelace/dist/components/tooltip/tooltip.js';
-import { chromeTokens, inkButton } from './chrome.ts';
+import { chromeTokens } from './chrome.ts';
 import { firePress } from './events.ts';
 import { place } from './place.ts';
+import { press, pressStyles } from './press.ts';
 
 /**
  * Settings, on the band. The app opens its own settings dialog.
@@ -13,11 +12,18 @@ import { place } from './place.ts';
  */
 @customElement('look-gear')
 export class LookGear extends LitElement {
+  static override shadowRootOptions = { ...LitElement.shadowRootOptions, delegatesFocus: true };
+
+  /** Presses the button, as a person would. */
+  override click() {
+    this.renderRoot.querySelector('button')!.click();
+  }
+
   static override styles = [
     chromeTokens,
-    inkButton,
+    pressStyles,
     css`
-      sl-icon-button {
+      .icon {
         font-size: 1.5rem;
       }
     `,
@@ -29,13 +35,12 @@ export class LookGear extends LitElement {
   }
 
   override render() {
-    return html`<sl-tooltip content="Settings" placement="bottom">
-      <sl-icon-button
-        name="gear"
-        label="Settings"
-        @click=${(e: Event) => firePress(this, e)}
-      ></sl-icon-button>
-    </sl-tooltip>`;
+    return press({
+      icon: 'gear',
+      label: 'Settings',
+      placement: 'bottom',
+      onPress: (e) => firePress(this, e),
+    });
   }
 }
 

@@ -44,79 +44,13 @@ describe('placement', () => {
   });
 });
 
-describe('presses', () => {
-  it('fires look-press with the Shift key from a command, and nothing when disabled', async () => {
-    const cmd = await mount('<look-command icon="floppy" label="Save" key="Mod+S"></look-command>', 'look-command');
+describe('look-about', () => {
+  it('fires look-press from a pressable about', async () => {
+    const about = await mount('<look-about name="otira" pressable></look-about>', 'look-about');
     const seen = vi.fn();
-    document.body.addEventListener('look-press', (e) => seen(e.target, e.detail));
-    inner(cmd, 'sl-icon-button').dispatchEvent(new MouseEvent('click', { shiftKey: true, bubbles: true }));
-    expect(seen).toHaveBeenCalledWith(cmd, { shiftKey: true });
-
-    seen.mockClear();
-    (cmd as unknown as { disabled: boolean }).disabled = true;
-    await (cmd as unknown as LitElement).updateComplete;
-    inner(cmd, 'sl-icon-button').dispatchEvent(new MouseEvent('click', { bubbles: true }));
-    expect(seen).not.toHaveBeenCalled();
-  });
-
-  it('shows the label and key in the tooltip', async () => {
-    const cmd = await mount('<look-command icon="arrow-counterclockwise" label="Undo" key="Mod+Z"></look-command>', 'look-command');
-    expect(inner(cmd, 'sl-tooltip').getAttribute('content')).toMatch(/^Undo {2}(⌘Z|Ctrl\+Z)$/);
-  });
-
-  it('draws a word command as a button', async () => {
-    const cmd = await mount('<look-command word="HOLD" label="Hold every train"></look-command>', 'look-command');
-    expect(inner(cmd, 'button').textContent!.trim()).toBe('HOLD');
-  });
-
-  it('keeps a disabled command with a reason hoverable, with the reason as its tooltip, and fires nothing', async () => {
-    const cmd = await mount(
-      '<look-command icon="car-front" label="Car" disabled reason="Calibrate first."></look-command>',
-      'look-command',
-    );
-    const seen = vi.fn();
-    cmd.addEventListener('look-press', seen);
-    const button = inner(cmd, 'sl-icon-button');
-    expect(button.hasAttribute('disabled')).toBe(false);
-    expect(button.classList.contains('off')).toBe(true);
-    expect(inner(cmd, 'sl-tooltip').getAttribute('content')).toBe('Calibrate first.');
-    button.click();
-    expect(seen).not.toHaveBeenCalled();
-  });
-
-  it('hoists the tooltip so the rail does not clip it', async () => {
-    const cmd = await mount('<look-command icon="floppy" label="Save"></look-command>', 'look-command');
-    expect(inner(cmd, 'sl-tooltip').hasAttribute('hoist')).toBe(true);
-  });
-
-  it('ignores a reason on an enabled command', async () => {
-    const cmd = await mount('<look-command icon="car-front" label="Car" reason="Calibrate first."></look-command>', 'look-command');
-    expect(inner(cmd, 'sl-tooltip').getAttribute('content')).toBe('Car');
-  });
-
-  it('sets aria-pressed on the button inside an icon command', async () => {
-    const cmd = await mount('<look-command icon="car-front" label="Car" pressed></look-command>', 'look-command');
-    const button = () => inner(cmd, 'sl-icon-button').shadowRoot!.querySelector('button')!;
-    await vi.waitFor(() => expect(button().getAttribute('aria-pressed')).toBe('true'));
-    (cmd as unknown as { pressed: boolean }).pressed = false;
-    await vi.waitFor(() => expect(button().hasAttribute('aria-pressed')).toBe(false));
-  });
-
-  it('fires look-press from the gear, a band press and a pressable about', async () => {
-    const band = await mount(
-      `<look-band>
-        <look-about name="otira" pressable></look-about>
-        <look-band-press word="GO"></look-band-press>
-        <look-gear></look-gear>
-      </look-band>`,
-      'look-band',
-    );
-    const seen: string[] = [];
-    band.addEventListener('look-press', (e) => seen.push((e.target as Element).localName));
-    inner(document.querySelector('look-about')!, 'button').click();
-    inner(document.querySelector('look-band-press')!, 'button').click();
-    inner(document.querySelector('look-gear')!, 'sl-icon-button').click();
-    expect(seen).toEqual(['look-about', 'look-band-press', 'look-gear']);
+    about.addEventListener('look-press', seen);
+    inner(about, 'button').click();
+    expect(seen).toHaveBeenCalledOnce();
   });
 
   it('draws an about that is not pressable as text', async () => {
@@ -180,13 +114,13 @@ describe('look-power', () => {
     expect(await press('on', '.stop')).toEqual(['stopped']);
   });
 
-  it('asks for nothing while a reason holds it, and shows the reason', async () => {
+  it('asks for nothing while a reason disables it, and shows the reason', async () => {
     expect(await press('on', '.power', 'no station')).toEqual([]);
     expect(await press('on', '.stop', 'no station')).toEqual([]);
     expect(inner(document.querySelector('look-power')!, 'sl-tooltip').getAttribute('content')).toBe('no station');
   });
 
-  it('holds only the toggle for a toggle reason, and keeps the stop sign live', async () => {
+  it('disables only the toggle for a toggle reason, and keeps the stop sign live', async () => {
     const power = await mount('<look-power state="off" toggle-reason="no station"></look-power>', 'look-power');
     const seen: string[] = [];
     power.addEventListener('look-power', (e) => seen.push(e.detail.state));

@@ -11,14 +11,3 @@ export const chromeTokens = css`
   }
 `;
 
-/** A white icon button on the band or the rail, dimmed on hover. */
-export const inkButton = css`
-  sl-icon-button {
-    color: var(--band-ink);
-  }
-
-  sl-icon-button::part(base):hover,
-  sl-icon-button::part(base):focus-visible {
-    color: rgba(255, 255, 255, 0.7);
-  }
-`;

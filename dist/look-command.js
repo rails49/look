@@ -4,14 +4,11 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { LitElement, css, html, nothing, unsafeCSS } from 'lit';
-import { customElement, property, query } from 'lit/decorators.js';
-import '@shoelace-style/shoelace/dist/components/icon-button/icon-button.js';
-import '@shoelace-style/shoelace/dist/components/tooltip/tooltip.js';
+import { LitElement, css, unsafeCSS } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
 import { chromeTokens } from "./chrome.js";
 import { firePress } from "./events.js";
-import { libraryOf } from "./icons.js";
-import { tip } from "./keys.js";
+import { press, pressStyles } from "./press.js";
 import { TURN_HEIGHT_PX } from "./tokens.js";
 /**
  * A command on the rail: an icon with its label and key as the tooltip, or a
@@ -32,8 +29,14 @@ let LookCommand = class LookCommand extends LitElement {
         this.disabled = false;
         this.reason = '';
     }
+    static { this.shadowRootOptions = { ...LitElement.shadowRootOptions, delegatesFocus: true }; }
+    /** Presses the button, as a person would. */
+    click() {
+        this.renderRoot.querySelector('button').click();
+    }
     static { this.styles = [
         chromeTokens,
+        pressStyles,
         css `
       :host {
         display: flex;
@@ -41,69 +44,18 @@ let LookCommand = class LookCommand extends LitElement {
         width: 100%;
       }
 
-      sl-icon-button {
+      .icon {
         font-size: 2.1em;
-        transition: transform 0.1s;
-      }
-
-      sl-icon-button::part(base) {
-        color: white;
-        justify-content: center;
         min-width: var(--rail-button);
         min-height: var(--rail-button);
       }
 
-      sl-icon-button::part(base):hover,
-      sl-icon-button::part(base):focus-visible {
-        color: rgba(255, 255, 255, 0.7);
-      }
-
-      sl-icon-button:not([disabled], .off):hover {
-        transform: scale(1.1);
-      }
-
-      sl-icon-button[disabled],
-      .off {
-        opacity: 0.35;
-      }
-
-      .off::part(base) {
-        cursor: default;
-      }
-
-      :host([pressed]) sl-icon-button::part(base) {
-        background: rgba(255, 255, 255, 0.22);
-        border-radius: 8px;
-      }
-
-      button {
+      .word {
         width: calc(100% - 8px);
         min-height: var(--rail-button);
-        font: inherit;
         font-size: 0.8rem;
         font-weight: 600;
         letter-spacing: 0.06em;
-        color: white;
-        background: none;
-        border: 1px solid rgba(255, 255, 255, 0.5);
-        border-radius: 6px;
-        cursor: pointer;
-      }
-
-      button:hover,
-      button:focus-visible {
-        background: rgba(255, 255, 255, 0.18);
-        outline: none;
-      }
-
-      :host([pressed]) button {
-        background: rgba(255, 255, 255, 0.22);
-      }
-
-      button:disabled {
-        opacity: 0.35;
-        cursor: default;
-        background: none;
       }
 
       @media (max-height: ${unsafeCSS(TURN_HEIGHT_PX)}px) {
@@ -111,56 +63,29 @@ let LookCommand = class LookCommand extends LitElement {
           width: auto;
         }
 
-        sl-icon-button {
+        .icon {
           font-size: 1.6em;
         }
 
-        button {
+        .word {
           width: auto;
           padding: 0 0.8rem;
         }
       }
     `,
     ]; }
-    press(e) {
-        if (!this.disabled)
-            firePress(this, e);
-    }
-    // sl-icon-button passes no aria-pressed to the button inside it.
-    async updated() {
-        if (!this.iconButton)
-            return;
-        await this.iconButton.updateComplete;
-        const button = this.iconButton.shadowRoot.querySelector('button');
-        if (this.pressed)
-            button.setAttribute('aria-pressed', 'true');
-        else
-            button.removeAttribute('aria-pressed');
-    }
     render() {
-        // Not disabled when there is a reason: a disabled sl-icon-button takes no
-        // pointer events, and the tooltip has to open to say why.
-        const held = this.disabled && !!this.reason;
-        const content = held ? this.reason : tip(this.label, this.key);
-        if (this.word)
-            return html `<button
-        ?disabled=${this.disabled}
-        title=${content}
-        aria-pressed=${this.pressed ? 'true' : nothing}
-        @click=${this.press}
-      >
-        ${this.word}
-      </button>`;
-        return html `<sl-tooltip content=${content} placement="right" hoist>
-      <sl-icon-button
-        name=${this.icon}
-        library=${libraryOf(this.icon)}
-        label=${this.label}
-        class=${held ? 'off' : ''}
-        ?disabled=${this.disabled && !held}
-        @click=${this.press}
-      ></sl-icon-button>
-    </sl-tooltip>`;
+        return press({
+            icon: this.icon,
+            word: this.word,
+            label: this.label,
+            key: this.key,
+            disabled: this.disabled,
+            reason: this.reason,
+            pressed: this.pressed,
+            placement: 'right',
+            onPress: (e) => firePress(this, e),
+        });
     }
 };
 __decorate([
@@ -184,9 +109,6 @@ __decorate([
 __decorate([
     property()
 ], LookCommand.prototype, "reason", void 0);
-__decorate([
-    query('sl-icon-button')
-], LookCommand.prototype, "iconButton", void 0);
 LookCommand = __decorate([
     customElement('look-command')
 ], LookCommand);
