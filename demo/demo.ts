@@ -39,7 +39,7 @@ export class DemoPane extends LitElement {
         <sl-button size="small">Cancel</sl-button>
       </div>
       <p>
-        <sl-switch size="small" @sl-change=${this.silence}>Station silent: the toggle is held, STOP stays live</sl-switch>
+        <sl-switch size="small" @sl-change=${this.silence}>Station silent: the toggle is disabled, STOP stays live</sl-switch>
       </p>
       <look-dialog label="Settings" size="medium">
         <p>The dialog shell.</p>

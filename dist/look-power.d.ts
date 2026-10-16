@@ -1,6 +1,4 @@
 import { LitElement } from 'lit';
-import '@shoelace-style/shoelace/dist/components/icon-button/icon-button.js';
-import '@shoelace-style/shoelace/dist/components/tooltip/tooltip.js';
 import { type PowerShown } from './events.ts';
 /**
  * Track power: a toggle and a stop sign. The power glyph is green when on,

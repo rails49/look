@@ -10,7 +10,7 @@ repository's `wayfinder:map` issue.
 
 ```json
 "dependencies": {
-  "@rails49/look": "github:rails49/look#v0.4.0",
+  "@rails49/look": "github:rails49/look#v0.5.0",
   "@shoelace-style/shoelace": "^2.20.1",
   "lit": "^3.2.1"
 }
@@ -50,7 +50,7 @@ elements, their attributes and events are in
 ## A static page
 
 ```html
-<script type="module" src="https://cdn.jsdelivr.net/gh/rails49/look@v0.4.0/dist/look.bundle.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/gh/rails49/look@v0.5.0/dist/look.bundle.js"></script>
 ```
 
 `dist/look.bundle.js` holds Lit, the Shoelace components the chrome uses,
@@ -61,7 +61,7 @@ the elements.
 
 ```sh
 look-check src index.html                                   # a built UI
-pnpm --package=github:rails49/look#v0.4.0 dlx look-check page  # a static page
+pnpm --package=github:rails49/look#v0.5.0 dlx look-check page  # a static page
 ```
 
 It fails on a selector naming a `look-` element, on setting a package token or

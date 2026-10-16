@@ -1,6 +1,4 @@
 import { LitElement } from 'lit';
-import '@shoelace-style/shoelace/dist/components/icon-button/icon-button.js';
-import '@shoelace-style/shoelace/dist/components/tooltip/tooltip.js';
 /**
  * A press on the band: an icon with `label` as its tooltip, or a `word`.
  * A disabled press fires nothing.
@@ -12,8 +10,17 @@ export declare class LookBandPress extends LitElement {
     word: string;
     label: string;
     disabled: boolean;
+    static shadowRootOptions: {
+        delegatesFocus: boolean;
+        clonable?: boolean;
+        customElementRegistry?: CustomElementRegistry;
+        mode: ShadowRootMode;
+        serializable?: boolean;
+        slotAssignment?: SlotAssignmentMode;
+    };
+    /** Presses the button, as a person would. */
+    click(): void;
     static styles: import("lit").CSSResult[];
-    private press;
     render(): import("lit").TemplateResult<1>;
 }
 declare global {
