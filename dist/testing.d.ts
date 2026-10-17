@@ -10,5 +10,5 @@ export type PowerPress = 'toggle' | 'stop';
  * bubbling, composed and carrying `init`. A disabled press fires nothing.
  * Await the element's `updateComplete` first.
  */
-export declare function press(el: LookCommand | LookBandPress | LookGear | LookView, init?: MouseEventInit): void;
+export declare function press<E extends LookCommand | LookBandPress | LookGear | LookView>(el: E & (E extends LookPower ? never : unknown), init?: MouseEventInit): void;
 export declare function press(el: LookPower, which: PowerPress, init?: MouseEventInit): void;

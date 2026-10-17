@@ -227,7 +227,15 @@ describe('press()', () => {
 
   it('asks which press of look-power, and finds none on an element not yet rendered', () => {
     const power = document.createElement('look-power');
-    expect(() => press(power as unknown as LookCommand)).toThrow(/toggle/);
+    // @ts-expect-error look-power has two presses
+    expect(() => press(power)).toThrow(/toggle/);
     expect(() => press(power, 'stop')).toThrow(/rendered/);
+  });
+
+  it('presses nothing that is not a press', async () => {
+    const dialog = document.createElement('look-dialog');
+    document.body.append(dialog);
+    await dialog.updateComplete;
+    expect(() => press(dialog as unknown as LookCommand)).toThrow(/not a press/);
   });
 });
