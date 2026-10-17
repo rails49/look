@@ -1,6 +1,8 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import '../src/index.ts';
 import type { LitElement } from 'lit';
+import type { LookBandPress, LookCommand, LookGear, LookPower } from '../src/index.ts';
+import { press } from '../src/testing.ts';
 
 /** One press element as an app writes it, with the press's label and the event it fires. */
 interface Case {
@@ -10,17 +12,22 @@ interface Case {
   /** The word it shows, which is then its name; the label is still its tooltip. */
   readonly word?: string;
   readonly event: string;
+  /** Presses it through `press()`, as an app's test does. */
+  readonly press: (el: Element, init?: MouseEventInit) => void;
   /** The attributes that disable it with a reason, if it can be. */
   readonly reason?: (why: string) => string;
   /** The attributes that disable it with no reason, if it can be. */
   readonly disabled?: string;
 }
 
+const pressOne = (el: Element, init?: MouseEventInit) => press(el as LookCommand | LookBandPress | LookGear, init);
+
 const command: Case = {
   name: 'look-command',
   markup: (attrs) => `<look-command icon="floppy" label="Save" ${attrs}></look-command>`,
   label: 'Save',
   event: 'look-press',
+  press: pressOne,
   reason: (why) => `disabled reason="${why}"`,
   disabled: 'disabled',
 };
@@ -30,6 +37,7 @@ const bandPress: Case = {
   markup: (attrs) => `<look-band-press icon="github" label="Source" ${attrs}></look-band-press>`,
   label: 'Source',
   event: 'look-press',
+  press: pressOne,
   disabled: 'disabled',
 };
 
@@ -39,6 +47,7 @@ const commandWord: Case = {
   label: 'Hold every train',
   word: 'HOLD',
   event: 'look-press',
+  press: pressOne,
   reason: (why) => `disabled reason="${why}"`,
   disabled: 'disabled',
 };
@@ -49,6 +58,7 @@ const bandWord: Case = {
   label: 'Start the run',
   word: 'GO',
   event: 'look-press',
+  press: pressOne,
   disabled: 'disabled',
 };
 
@@ -57,6 +67,7 @@ const gear: Case = {
   markup: (attrs) => `<look-gear ${attrs}></look-gear>`,
   label: 'Settings',
   event: 'look-press',
+  press: pressOne,
 };
 
 const powerToggle: Case = {
@@ -64,6 +75,7 @@ const powerToggle: Case = {
   markup: (attrs) => `<look-power state="on" ${attrs}></look-power>`,
   label: 'Track power is on; turn it off',
   event: 'look-power',
+  press: (el, init) => press(el as LookPower, 'toggle', init),
   reason: (why) => `toggle-reason="${why}"`,
 };
 
@@ -72,6 +84,7 @@ const powerStop: Case = {
   markup: (attrs) => `<look-power state="on" ${attrs}></look-power>`,
   label: 'Stop every train',
   event: 'look-power',
+  press: (el, init) => press(el as LookPower, 'stop', init),
   reason: (why) => `reason="${why}"`,
 };
 
@@ -110,7 +123,7 @@ describe.each([command, commandWord, bandPress, bandWord, gear, powerToggle, pow
     expect(tooltip(button)).toBe(c.label);
     expect(button.hasAttribute('aria-disabled')).toBe(false);
     expect(button.hasAttribute('aria-pressed')).toBe(false);
-    button.click();
+    c.press(el);
     expect(seen).toHaveBeenCalledOnce();
   });
 });
@@ -124,7 +137,7 @@ describe.each([command, commandWord, powerToggle, powerStop])('$name disabled wi
     expect(button.hasAttribute('disabled')).toBe(false);
     expect(tooltip(button)).toBe('Calibrate first.');
     expect(button.getAttribute('aria-description')).toBe('Calibrate first.');
-    button.click();
+    c.press(el);
     expect(seen).not.toHaveBeenCalled();
   });
 });
@@ -137,7 +150,7 @@ describe.each([command, commandWord, bandPress, bandWord])('$name disabled with 
     expect(button.getAttribute('aria-disabled')).toBe('true');
     expect(button.hasAttribute('disabled')).toBe(false);
     expect(tooltip(button)).toBe(c.label);
-    button.click();
+    c.press(el);
     expect(seen).not.toHaveBeenCalled();
   });
 });
@@ -146,7 +159,7 @@ describe('look-command', () => {
   it('carries the Shift key in look-press', async () => {
     const el = await mount(command);
     const seen = listen(el, 'look-press');
-    named(el, 'Save').dispatchEvent(new MouseEvent('click', { shiftKey: true, bubbles: true }));
+    press(el as LookCommand, { shiftKey: true });
     expect(seen.mock.calls[0]![0].detail).toEqual({ shiftKey: true });
   });
 
@@ -185,5 +198,36 @@ describe.each([command, commandWord, bandPress, bandWord, gear])('$name as one p
     await el.updateComplete;
     el.click();
     expect(seen).toHaveBeenCalledOnce();
+  });
+});
+
+describe('look-view', () => {
+  it('fires look-view once when pressed, and nothing when current', async () => {
+    document.body.innerHTML = '<look-view name="run" icon="play" label="Run"></look-view>';
+    const view = document.querySelector('look-view')!;
+    await view.updateComplete;
+    const seen = listen(view, 'look-view');
+    press(view);
+    expect(seen).toHaveBeenCalledOnce();
+    expect(seen.mock.calls[0]![0].detail).toEqual({ name: 'run' });
+    view.current = true;
+    await view.updateComplete;
+    press(view);
+    expect(seen).toHaveBeenCalledOnce();
+  });
+});
+
+describe('press()', () => {
+  it('sends a click that bubbles out of the shadow root', async () => {
+    const el = await mount(command);
+    const clicks = listen(document.body, 'click');
+    press(el as LookCommand);
+    expect(clicks).toHaveBeenCalledOnce();
+  });
+
+  it('asks which press of look-power, and finds none on an element not yet rendered', () => {
+    const power = document.createElement('look-power');
+    expect(() => press(power as unknown as LookCommand)).toThrow(/toggle/);
+    expect(() => press(power, 'stop')).toThrow(/rendered/);
   });
 });
