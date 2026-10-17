@@ -48,6 +48,22 @@ Each work-pane component puts `lookTheme` first in its `static styles`. The
 elements, their attributes and events are in
 [The package's elements, slots, properties and events](https://github.com/rails49/look/issues/7#issuecomment-6153278540).
 
+## A test that presses
+
+```ts
+import { press } from '@rails49/look/testing';
+
+await command.updateComplete;
+press(command); // look-command, look-band-press, look-gear, look-view
+press(command, { shiftKey: true }); // look-press carries { shiftKey: true }
+press(power, 'toggle'); // look-power: 'toggle' or 'stop'
+```
+
+`press()` clicks the button the element draws, as a person would; a disabled
+press fires nothing. A test that presses this way reads no look element's
+shadow root, so it keeps passing when look changes what it draws.
+`@rails49/look/testing` is not part of `@rails49/look` or `look.bundle.js`.
+
 ## A static page
 
 ```html
