@@ -3,7 +3,8 @@
 The band, the rail, the dialogs and the widget styling shared by rails49's
 UIs: `control`, `occupancy`, the dcc-ex UI, the landing page and the
 installation page. Each of them draws its chrome from this package instead of
-writing its own. Lit elements on Shoelace, MIT. The work is tracked on this
+writing its own. Lit elements on Shoelace, MIT. What the chrome means and who
+takes it is in [`docs/LOOK.md`](docs/LOOK.md). The work is tracked on this
 repository's `wayfinder:map` issue.
 
 ## A built UI
