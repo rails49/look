@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import '../src/index.ts';
 import type { LitElement } from 'lit';
 import { libraryOf } from '../src/icons.ts';
+import { press } from '../src/testing.ts';
 
 async function mount<T extends Element = HTMLElement>(markup: string, selector: string): Promise<T> {
   document.body.innerHTML = markup;
@@ -76,8 +77,8 @@ describe('views', () => {
     const seen: string[] = [];
     rail.addEventListener('look-view', (e) => seen.push(e.detail.name));
     const [run, edit] = document.querySelectorAll('look-view');
-    inner(run!, 'button').click();
-    inner(edit!, 'button').click();
+    press(run!);
+    press(edit!);
     expect(seen).toEqual(['edit']);
     expect(inner(run!, 'button').getAttribute('aria-current')).toBe('page');
   });
@@ -90,42 +91,48 @@ describe('views', () => {
 });
 
 describe('look-power', () => {
-  const press = async (state: string, which: string, reason = '') => {
-    const power = await mount(`<look-power state="${state}" reason="${reason}"></look-power>`, 'look-power');
+  const ask = async (state: string, which: 'toggle' | 'stop', reason = '') => {
+    const power = await mount<HTMLElementTagNameMap['look-power']>(
+      `<look-power state="${state}" reason="${reason}"></look-power>`,
+      'look-power',
+    );
     const seen: string[] = [];
     power.addEventListener('look-power', (e) => seen.push(e.detail.state));
-    inner(power, which).click();
+    press(power, which);
     return seen;
   };
 
   it('asks for off when on, and for on when off or stopped', async () => {
-    expect(await press('on', '.power')).toEqual(['off']);
-    expect(await press('off', '.power')).toEqual(['on']);
-    expect(await press('stopped', '.power')).toEqual(['on']);
+    expect(await ask('on', 'toggle')).toEqual(['off']);
+    expect(await ask('off', 'toggle')).toEqual(['on']);
+    expect(await ask('stopped', 'toggle')).toEqual(['on']);
   });
 
   it('asks for on while draining, and keeps the stop sign live', async () => {
-    expect(await press('draining', '.power')).toEqual(['on']);
-    expect(await press('draining', '.stop')).toEqual(['stopped']);
+    expect(await ask('draining', 'toggle')).toEqual(['on']);
+    expect(await ask('draining', 'stop')).toEqual(['stopped']);
     expect(inner(document.querySelector('look-power')!, 'sl-tooltip').getAttribute('content')).toMatch(/^Draining/);
   });
 
   it('asks for stopped from the stop sign', async () => {
-    expect(await press('on', '.stop')).toEqual(['stopped']);
+    expect(await ask('on', 'stop')).toEqual(['stopped']);
   });
 
   it('asks for nothing while a reason disables it, and shows the reason', async () => {
-    expect(await press('on', '.power', 'no station')).toEqual([]);
-    expect(await press('on', '.stop', 'no station')).toEqual([]);
+    expect(await ask('on', 'toggle', 'no station')).toEqual([]);
+    expect(await ask('on', 'stop', 'no station')).toEqual([]);
     expect(inner(document.querySelector('look-power')!, 'sl-tooltip').getAttribute('content')).toBe('no station');
   });
 
   it('disables only the toggle for a toggle reason, and keeps the stop sign live', async () => {
-    const power = await mount('<look-power state="off" toggle-reason="no station"></look-power>', 'look-power');
+    const power = await mount<HTMLElementTagNameMap['look-power']>(
+      '<look-power state="off" toggle-reason="no station"></look-power>',
+      'look-power',
+    );
     const seen: string[] = [];
     power.addEventListener('look-power', (e) => seen.push(e.detail.state));
-    inner(power, '.power').click();
-    inner(power, '.stop').click();
+    press(power, 'toggle');
+    press(power, 'stop');
     expect(seen).toEqual(['stopped']);
     const tips = [...power.shadowRoot!.querySelectorAll('sl-tooltip')].map((t) => t.getAttribute('content'));
     expect(tips).toEqual(['no station', 'Stop every train']);
