@@ -49,6 +49,21 @@ describe('bump', () => {
     expect(bump(dir, 'v0.2.0', bundle)).toEqual([]);
   });
 
+  it('leaves an ADR and a research note as they were written', () => {
+    const pinned = 'pinned at github:rails49/look#v0.1.0';
+    const dir = consumer({
+      'package.json': '{ "@rails49/look": "github:rails49/look#v0.1.0" }',
+      'docs/adr/0001-x.md': pinned,
+      'docs/research/x.md': pinned,
+      'ui/docs/adr/0002-y.md': pinned,
+    });
+    expect(bump(dir, 'v0.2.0', bundle).map((p) => p.slice(dir.length + 1))).toEqual(['package.json']);
+    expect(read(dir, 'package.json')).toContain('github:rails49/look#v0.2.0');
+    expect(read(dir, 'docs/adr/0001-x.md')).toBe(pinned);
+    expect(read(dir, 'docs/research/x.md')).toBe(pinned);
+    expect(read(dir, 'ui/docs/adr/0002-y.md')).toBe(pinned);
+  });
+
   it('leaves a binary file byte for byte', () => {
     const dir = consumer({});
     const png = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0xff, 0xfe, 0x00, 0x80]);
