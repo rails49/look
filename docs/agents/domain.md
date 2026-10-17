@@ -9,6 +9,10 @@ How the engineering skills should consume this repo's domain documentation when 
 
 If either doesn't exist, proceed without comment. Don't flag the absence and don't suggest creating them upfront. The `/domain-modeling` skill creates them when terms or decisions get resolved.
 
+## What each kind of doc holds
+
+Org [ADR-0017](https://github.com/rails49/.github/tree/main/docs/adr) says what each kind of doc holds: the glossary in `CONTEXT.md`, the reference in `docs/LOOK.md`, a decision in `docs/adr/`. An accepted ADR does not change, and a note in `docs/research/` is never edited; a glossary term links the doc that owns it.
+
 ## Use the glossary's vocabulary
 
 When your output names a domain concept (in an issue title, a refactor proposal, a hypothesis, a test name), use the term as defined in `CONTEXT.md`. Don't drift to synonyms the glossary rejects.
