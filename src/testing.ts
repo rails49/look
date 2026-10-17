@@ -10,15 +10,22 @@ export type PowerPress = 'toggle' | 'stop';
 
 const POWER_PRESS: Record<PowerPress, string> = { toggle: '.power', stop: '.stop' };
 
+const ONE_PRESS = ['look-command', 'look-band-press', 'look-gear', 'look-view'];
+
 /**
  * Presses a look element as a person would: a `click` on the button it draws,
  * bubbling, composed and carrying `init`. A disabled press fires nothing.
  * Await the element's `updateComplete` first.
  */
-export function press(el: LookCommand | LookBandPress | LookGear | LookView, init?: MouseEventInit): void;
+export function press<E extends LookCommand | LookBandPress | LookGear | LookView>(
+  // look-power has two presses, so it takes the other overload, with which one.
+  el: E & (E extends LookPower ? never : unknown),
+  init?: MouseEventInit,
+): void;
 export function press(el: LookPower, which: PowerPress, init?: MouseEventInit): void;
 export function press(el: HTMLElement, which?: PowerPress | MouseEventInit, init?: MouseEventInit) {
   const power = el.localName === 'look-power';
+  if (!power && !ONE_PRESS.includes(el.localName)) throw new Error(`${el.localName} is not a press`);
   if (power !== (typeof which === 'string')) {
     throw new Error(power ? "press() on look-power needs 'toggle' or 'stop'" : `${el.localName} has one press`);
   }
