@@ -88,6 +88,52 @@ describe('look-band', () => {
   });
 });
 
+describe('a narrow band', () => {
+  const cutShort = (el: Element) => {
+    const style = getComputedStyle(el);
+    return [style.minWidth, style.overflow, style.textOverflow, style.whiteSpace];
+  };
+  const shrink = (el: Element) => getComputedStyle(el).flexShrink;
+
+  it('cuts status text short', async () => {
+    const band = await mount(
+      `<look-band ui="dccex">
+        <look-reading>no railroad loaded</look-reading>
+        <look-chip>station not reachable</look-chip>
+        <look-dot state="up">v5.6.4-rails49.9</look-dot>
+      </look-band>`,
+      'look-band',
+    );
+    const short = ['0', 'hidden', 'ellipsis', 'nowrap'];
+    expect(cutShort(band.querySelector('look-reading')!)).toEqual(short);
+    expect(cutShort(band.querySelector('look-chip')!)).toEqual(short);
+    expect(cutShort(inner(band.querySelector('look-dot')!, '.text'))).toEqual(short);
+  });
+
+  it('keeps the dot whole', async () => {
+    const dot = await mount('<look-dot state="up">v5.6.4-rails49.9</look-dot>', 'look-dot');
+    expect(shrink(inner(dot, '.dot'))).toBe('0');
+    expect(getComputedStyle(dot).minWidth).toBe(getComputedStyle(inner(dot, '.dot')).width);
+  });
+
+  it('leaves no room for a name on a dot without one', async () => {
+    const dot = await mount('<look-dot state="up"></look-dot>', 'look-dot');
+    expect(getComputedStyle(inner(dot, '.text')).display).toBe('none');
+  });
+
+  it('keeps the mark, the UI name, a band press, the gear and track power whole', async () => {
+    const band = await mount('<look-band ui="dccex"><look-band-press word="HOLD"></look-band-press></look-band>', 'look-band');
+    const press = document.querySelector('look-band-press')!;
+    expect([shrink(inner(band, '.lead')), shrink(press), shrink(inner(band, '.tail'))]).toEqual(['0', '0', '0']);
+  });
+
+  it('lays the status items out beside the mark, the gear and track power', async () => {
+    const band = await mount('<look-band ui="dccex"></look-band>', 'look-band');
+    const parents = ['.lead', 'slot:not([name])', '.tail'].map((s) => inner(band, s).parentElement);
+    expect(parents).toEqual([inner(band, 'nav'), inner(band, 'nav'), inner(band, 'nav')]);
+  });
+});
+
 describe('look-group', () => {
   it('is a group named by its label', async () => {
     const group = await mount('<look-group label="Edit"></look-group>', 'look-group');

@@ -61,6 +61,8 @@ Typeface and type scale are Shoelace's theme's.
   pressable or not, in a fixed order: status, then the gear, then track power
   at the far right. A press that acts on the current view goes on the rail. A
   UI with nothing to show there draws nothing.
+- Where the window is narrow, status text is cut short with "…"; the mark,
+  the UI name, the gear and track power always show in full.
 - Switching views is the rail's first group.
 - A colour says the same thing in every UI.
 - Only this package adds glyphs to the chrome.

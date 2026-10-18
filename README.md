@@ -11,7 +11,7 @@ repository's `wayfinder:map` issue.
 
 ```json
 "dependencies": {
-  "@rails49/look": "github:rails49/look#v0.6.0",
+  "@rails49/look": "github:rails49/look#v0.6.1",
   "@shoelace-style/shoelace": "^2.20.1",
   "lit": "^3.2.1"
 }
@@ -78,7 +78,7 @@ the elements.
 
 ```sh
 look-check src index.html                                   # a built UI
-pnpm --package=github:rails49/look#v0.6.0 dlx look-check page  # a static page
+pnpm --package=github:rails49/look#v0.6.1 dlx look-check page  # a static page
 ```
 
 It fails on a selector naming a `look-` element, on setting a package token or

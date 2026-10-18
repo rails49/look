@@ -9,7 +9,10 @@ import { NARROW_WIDTH_PX } from './tokens.ts';
 
 /**
  * The band: the mark, the UI name and what the UI is about on the left; its
- * status items, the gear and track power on the right, in that order.
+ * status items, the gear and track power on the right, in that order. Where
+ * the band is too narrow for all of it, the status items and what the UI is
+ * about cut their text short; the mark, the UI name, a band press, the gear
+ * and track power keep their size.
  *
  * @slot about - A `look-about`.
  * @slot - Status items: `look-reading`, `look-chip`, `look-dot`, `look-band-press`.
@@ -39,18 +42,20 @@ export class LookBand extends LitElement {
       nav {
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        gap: 1rem;
+        gap: 0.75rem;
         height: 100%;
         padding: 0 1rem;
         box-sizing: border-box;
       }
 
-      .left {
-        display: flex;
-        align-items: center;
-        gap: 1.5rem;
-        min-width: 0;
+      slot[name='about']::slotted(*) {
+        margin-left: 0.75rem;
+      }
+
+      /* Pushes the status items to the far right; with the gaps either side, at least 1rem. */
+      .space {
+        flex: 1 0 0;
+        margin-left: -0.5rem;
       }
 
       .lead {
@@ -101,17 +106,11 @@ export class LookBand extends LitElement {
         white-space: nowrap;
       }
 
-      .right {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        flex-shrink: 0;
-      }
-
       .tail {
         display: flex;
         align-items: center;
         gap: 0.5rem;
+        flex-shrink: 0;
       }
     `,
   ];
@@ -124,24 +123,21 @@ export class LookBand extends LitElement {
   override render() {
     return html`
       <nav>
-        <div class="left">
-          <div class="lead">
-            <sl-tooltip content="rails49.org" placement="bottom" hoist>
-              <a class="mark" href="https://rails49.org" target="_blank" rel="noopener" aria-label="rails49.org">
-                <span class="wide" aria-hidden="true">${unsafeHTML(MARK_WIDE)}</span>
-                <span class="square" aria-hidden="true">${unsafeHTML(MARK_SQUARE)}</span>
-              </a>
-            </sl-tooltip>
-            ${this.ui ? html`<span class="ui">${this.ui}</span>` : nothing}
-          </div>
-          <slot name="about"></slot>
+        <div class="lead">
+          <sl-tooltip content="rails49.org" placement="bottom" hoist>
+            <a class="mark" href="https://rails49.org" target="_blank" rel="noopener" aria-label="rails49.org">
+              <span class="wide" aria-hidden="true">${unsafeHTML(MARK_WIDE)}</span>
+              <span class="square" aria-hidden="true">${unsafeHTML(MARK_SQUARE)}</span>
+            </a>
+          </sl-tooltip>
+          ${this.ui ? html`<span class="ui">${this.ui}</span>` : nothing}
         </div>
-        <div class="right">
-          <slot></slot>
-          <div class="tail">
-            <slot name="gear"></slot>
-            <slot name="power"></slot>
-          </div>
+        <slot name="about"></slot>
+        <span class="space"></span>
+        <slot></slot>
+        <div class="tail">
+          <slot name="gear"></slot>
+          <slot name="power"></slot>
         </div>
       </nav>
     `;
