@@ -2,7 +2,10 @@ import { LitElement } from 'lit';
 import '@shoelace-style/shoelace/dist/components/tooltip/tooltip.js';
 /**
  * The band: the mark, the UI name and what the UI is about on the left; its
- * status items, the gear and track power on the right, in that order.
+ * status items, the gear and track power on the right, in that order. Where
+ * the band is too narrow for all of it, the status items and what the UI is
+ * about cut their text short; the mark, the UI name, a band press, the gear
+ * and track power keep their size.
  *
  * @slot about - A `look-about`.
  * @slot - Status items: `look-reading`, `look-chip`, `look-dot`, `look-band-press`.
