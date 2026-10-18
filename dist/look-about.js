@@ -37,6 +37,8 @@ let LookAbout = class LookAbout extends LitElement {
         align-items: center;
         gap: 0.4rem;
         min-width: 0;
+        max-width: 100%;
+        box-sizing: border-box;
         font: inherit;
         font-size: 1.25rem;
         font-weight: 600;
