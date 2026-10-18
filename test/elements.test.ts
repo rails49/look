@@ -61,6 +61,33 @@ describe('look-about', () => {
   });
 });
 
+describe('look-band', () => {
+  it('draws the mark as a link to rails49.org in a new tab', async () => {
+    const band = await mount('<look-band ui="control"></look-band>', 'look-band');
+    const mark = inner(band, 'a.mark');
+    expect([mark.getAttribute('href'), mark.getAttribute('target'), mark.getAttribute('rel')]).toEqual([
+      'https://rails49.org',
+      '_blank',
+      'noopener',
+    ]);
+    expect(mark.querySelectorAll('svg')).toHaveLength(2);
+  });
+
+  it('draws the UI name after the mark and ahead of the about slot', async () => {
+    const band = await mount('<look-band ui="control"></look-band>', 'look-band');
+    const ui = inner(band, '.ui');
+    expect(ui.textContent).toBe('control');
+    const about = inner(band, 'slot[name="about"]');
+    expect(ui.compareDocumentPosition(about) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  it('draws the mark alone with no ui', async () => {
+    const band = await mount('<look-band></look-band>', 'look-band');
+    expect(inner(band, 'a.mark')).not.toBeNull();
+    expect(inner(band, '.ui')).toBeNull();
+  });
+});
+
 describe('look-group', () => {
   it('is a group named by its label', async () => {
     const group = await mount('<look-group label="Edit"></look-group>', 'look-group');
