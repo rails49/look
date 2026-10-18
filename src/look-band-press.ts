@@ -28,6 +28,10 @@ export class LookBandPress extends LitElement {
     chromeTokens,
     pressStyles,
     css`
+      :host {
+        flex-shrink: 0;
+      }
+
       .icon {
         font-size: 1.5rem;
       }
