@@ -1,6 +1,6 @@
 {
   "name": "@rails49/look",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "The chrome shared by rails49's UIs: band, rail, dialog shell and the Shoelace theme layer.",
   "license": "MIT",
   "type": "module",

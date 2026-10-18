@@ -13,6 +13,8 @@ export const TOKENS = {
 };
 /** Window height at or below which the shell and rail turn into a strip. */
 export const TURN_HEIGHT_PX = 640;
+/** Window width at or below which the band draws the square mark. */
+export const NARROW_WIDTH_PX = 600;
 /** The tokens as declarations, for a `:root` or `:host` block. */
 export const tokenDeclarations = Object.entries(TOKENS)
     .map(([name, value]) => `${name}: ${value};`)

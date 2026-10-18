@@ -38,6 +38,7 @@ Red on the chrome means stop or a fault and nothing else.
 |---|---|
 | `--rail-button` | every button on the rail; the minimum a thumb needs |
 | `TURN_HEIGHT_PX` | window height at or below which the rail becomes a horizontal strip |
+| `NARROW_WIDTH_PX` | window width at or below which the band draws the square mark |
 
 ## Theme
 
@@ -51,8 +52,11 @@ Typeface and type scale are Shoelace's theme's.
 - The chrome is a band across the top and a rail down the left. The band is
   about the whole of the system the UI is about. The rail carries what the
   current view offers, and exists wherever a UI has commands.
-- The band's left names what the UI is about: the UI, the box or the loaded
-  railroad. It may be pressed to change which.
+- The band's left starts with the mark, a link to rails49.org, then the UI
+  name, then what the UI is about: the box or the loaded railroad. It may be
+  pressed to change which. What the UI is about is left out where it would
+  repeat the UI name or the mark
+  ([ADR-0019](https://github.com/rails49/.github/blob/main/docs/adr/0019-the-band-starts-with-the-mark-and-the-ui-name.md)).
 - The band's right holds what is true of the whole system the UI is about,
   pressable or not, in a fixed order: status, then the gear, then track power
   at the far right. A press that acts on the current view goes on the rail. A
