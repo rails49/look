@@ -20,6 +20,10 @@ _Avoid_: logo, brand, icon
 The short name of the UI that is showing, drawn on the band after the mark: `control`, `dccex`, `occupancy`. It is the UI's label under the installation's name. Where it goes: [`docs/LOOK.md`](docs/LOOK.md#convention).
 _Avoid_: label, title
 
+**Help**:
+The link at the band's far right to the user docs of the UI that is showing. It is a link, not a press, and look draws it on every band. Where it goes: [`docs/LOOK.md`](docs/LOOK.md#convention).
+_Avoid_: docs button, GitHub link
+
 **Reason**:
 The text that says why a press is disabled. It takes the label's place in the tooltip ([ADR-0001](docs/adr/0001-native-button-for-presses.md)).
 _Avoid_: why, hint

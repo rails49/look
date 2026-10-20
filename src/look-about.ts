@@ -41,7 +41,6 @@ export class LookAbout extends LitElement {
         border: none;
         border-radius: 4px;
         padding: 0.2rem 0.4rem;
-        margin-left: -0.4rem;
       }
 
       button.about {

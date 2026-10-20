@@ -4,3 +4,12 @@ body {
   background: var(--sl-color-neutral-0);
   color: var(--sl-color-neutral-900);
 }
+
+.bands {
+  padding: 1rem;
+}
+
+.bands iframe {
+  display: block;
+  border: 1px solid var(--sl-color-neutral-300);
+}

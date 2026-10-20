@@ -56,13 +56,25 @@ Typeface and type scale are Shoelace's theme's.
   name, then what the UI is about: the box or the loaded railroad. It may be
   pressed to change which. What the UI is about is left out where it would
   repeat the UI name or the mark
-  ([ADR-0019](https://github.com/rails49/.github/blob/main/docs/adr/0019-the-band-starts-with-the-mark-and-the-ui-name.md)).
-- The band's right holds what is true of the whole system the UI is about,
-  pressable or not, in a fixed order: status, then the gear, then track power
-  at the far right. A press that acts on the current view goes on the rail. A
-  UI with nothing to show there draws nothing.
-- Where the window is narrow, status text is cut short with "…"; the mark,
-  the UI name, the gear and track power always show in full.
+  ([ADR-0020](https://github.com/rails49/.github/blob/main/docs/adr/0020-the-bands-right-ends-with-the-gear-and-help.md)).
+  The UI name and what the UI is about are set in one bold type.
+- The band's right is, from left to right, the UI's items, the gear, then Help
+  at the far right. The UI's items are what is true of the whole system the UI
+  is about, pressable or not, in the order the UI chooses; track power and the
+  stop sign are the rightmost of them. A press that acts on the current view
+  goes on the rail. A UI with nothing to show there draws nothing, and a UI
+  without settings shows no gear.
+- Help links to the user docs of the UI that is showing, in a new tab. It is
+  on every band. `look-band`'s `help` gives the address; without it Help
+  links to `https://github.com/rails49/<UI name>`, or to
+  `https://github.com/rails49` where there is no UI name.
+- look places track power, the gear and Help, and nothing else on the right.
+- Where the band does not fit, status text is cut short with "…" first. Then
+  the band drops the UI name, then Help, then the gear, only as far as it
+  must. What the UI is about is cut short last. The mark, the UI's presses and
+  track power keep their size.
+- A press with two states shows each by its glyph and tooltip, not by a
+  colour.
 - Switching views is the rail's first group.
 - A colour says the same thing in every UI.
-- Only this package adds glyphs to the chrome.
+- A UI may name any Bootstrap icon. A drawn glyph is added to look.
