@@ -57,6 +57,7 @@ Typeface and type scale are Shoelace's theme's.
   pressed to change which. What the UI is about is left out where it would
   repeat the UI name or the mark
   ([ADR-0020](https://github.com/rails49/.github/blob/main/docs/adr/0020-the-bands-right-ends-with-the-gear-and-help.md)).
+  The UI name and what the UI is about are set in one bold type.
 - The band's right is, from left to right, the UI's items, the gear, then Help
   at the far right. The UI's items are what is true of the whole system the UI
   is about, pressable or not, in the order the UI chooses; track power and the
@@ -70,7 +71,8 @@ Typeface and type scale are Shoelace's theme's.
 - look places track power, the gear and Help, and nothing else on the right.
 - Where the band does not fit, status text is cut short with "…" first. Then
   the band drops the UI name, then Help, then the gear, only as far as it
-  must. The mark, the UI's presses and track power keep their size.
+  must. What the UI is about is cut short last. The mark, the UI's presses and
+  track power keep their size.
 - A press with two states shows each by its glyph and tooltip, not by a
   colour.
 - Switching views is the rail's first group.
