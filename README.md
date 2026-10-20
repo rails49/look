@@ -30,8 +30,8 @@ setBasePath('/shoelace'); // where the UI serves Shoelace's assets
   <look-band ui="control">
     <look-about name="otira" detail="N scale"></look-about>
     <look-reading>3 trains</look-reading>
-    <look-gear></look-gear>
     <look-power state="on"></look-power>
+    <look-gear></look-gear>
   </look-band>
   <look-rail>
     <look-view name="edit" icon="pencil" label="Edit" current></look-view>
