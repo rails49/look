@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { NARROW_WIDTH_PX } from '../src/index.ts';
 import type { Window } from 'happy-dom';
 import type { LitElement } from 'lit';
@@ -89,6 +89,110 @@ describe('look-band', () => {
     const band = await mount('<look-band></look-band>', 'look-band');
     expect(inner(band, 'a.mark')).not.toBeNull();
     expect(inner(band, '.ui')).toBeNull();
+  });
+
+  it("draws the UI's items, track power, the gear, then Help at the far right", async () => {
+    const band = await mount('<look-band ui="control"></look-band>', 'look-band');
+    const right = ['slot:not([name])', 'slot[name="power"]', 'slot[name="gear"]', '.help'].map((s) => inner(band, s));
+    for (let i = 1; i < right.length; i++) {
+      expect(right[i - 1]!.compareDocumentPosition(right[i]!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    }
+    expect(inner(band, 'nav').lastElementChild!.lastElementChild).toBe(inner(band, '.help'));
+  });
+
+  const help = async (markup: string) => {
+    const band = await mount(markup, 'look-band');
+    const tip = inner(band, '.help');
+    const link = tip.querySelector('a')!;
+    return {
+      link: ['href', 'target', 'rel', 'aria-label'].map((a) => link.getAttribute(a)),
+      tip: [tip.getAttribute('content'), tip.getAttribute('placement')],
+      icon: link.querySelector('sl-icon')!.getAttribute('name'),
+    };
+  };
+
+  it("links Help to the UI's repository in a new tab", async () => {
+    expect(await help('<look-band ui="control"></look-band>')).toEqual({
+      link: ['https://github.com/rails49/control', '_blank', 'noopener', 'Help'],
+      tip: ['Help', 'bottom'],
+      icon: 'question-circle',
+    });
+  });
+
+  it('links Help to rails49 with no ui', async () => {
+    expect((await help('<look-band></look-band>')).link[0]).toBe('https://github.com/rails49');
+  });
+
+  it('links Help to the help address', async () => {
+    const markup = '<look-band ui="control" help="https://rails49.org/control/docs"></look-band>';
+    expect((await help(markup)).link[0]).toBe('https://rails49.org/control/docs');
+  });
+});
+
+describe('where the band does not fit', () => {
+  // happy-dom lays nothing out and observes no resize, so the test gives the
+  // band its width and calls the observer. The mark, the status items and
+  // track power take 200px; the UI name, Help and the gear take theirs while
+  // they show.
+  const WIDTHS = { ui: 70, help: 40, gear: 40 };
+  let resized: () => void;
+
+  beforeEach(() => {
+    vi.stubGlobal(
+      'ResizeObserver',
+      class {
+        constructor(callback: () => void) {
+          resized = callback;
+        }
+        observe() {}
+        disconnect() {}
+      },
+    );
+  });
+
+  afterEach(() => vi.unstubAllGlobals());
+
+  const narrowing = async (ui: string) => {
+    const band = await mount(
+      `<look-band ui="${ui}"><look-reading>3 trains</look-reading><look-power></look-power><look-gear></look-gear></look-band>`,
+      'look-band',
+    );
+    const nav = inner(band, 'nav');
+    const parts = { ui: inner(band, '.ui'), help: inner(band, '.help'), gear: inner(band, 'slot[name="gear"]') };
+    const shown = () =>
+      (Object.keys(parts) as (keyof typeof parts)[]).filter(
+        (k) => parts[k] && getComputedStyle(parts[k]).display !== 'none',
+      );
+    let width = 0;
+    Object.defineProperty(nav, 'clientWidth', { get: () => width });
+    Object.defineProperty(nav, 'scrollWidth', { get: () => shown().reduce((sum, k) => sum + WIDTHS[k], 200) });
+    return (w: number) => {
+      width = w;
+      resized();
+      return shown();
+    };
+  };
+
+  it('drops the UI name, then Help, then the gear, only as far as it must', async () => {
+    const at = await narrowing('control');
+    expect(at(400)).toEqual(['ui', 'help', 'gear']);
+    expect(at(350)).toEqual(['ui', 'help', 'gear']);
+    expect(at(300)).toEqual(['help', 'gear']);
+    expect(at(250)).toEqual(['gear']);
+    expect(at(200)).toEqual([]);
+    expect(at(150)).toEqual([]);
+  });
+
+  it('shows them again as the band widens', async () => {
+    const at = await narrowing('control');
+    at(150);
+    expect(at(300)).toEqual(['help', 'gear']);
+    expect(at(400)).toEqual(['ui', 'help', 'gear']);
+  });
+
+  it('drops Help first where there is no UI name', async () => {
+    const at = await narrowing('');
+    expect(at(270)).toEqual(['gear']);
   });
 });
 

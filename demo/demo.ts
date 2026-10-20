@@ -6,7 +6,7 @@ import '@shoelace-style/shoelace/dist/components/button/button.js';
 import '@shoelace-style/shoelace/dist/components/input/input.js';
 import '@shoelace-style/shoelace/dist/components/switch/switch.js';
 import { setBasePath } from '@shoelace-style/shoelace/dist/utilities/base-path.js';
-import { lookTheme, type LookDialog } from '../src/index.ts';
+import { LookBandPress, lookTheme, type LookDialog } from '../src/index.ts';
 
 setBasePath('/node_modules/@shoelace-style/shoelace/dist');
 
@@ -41,6 +41,7 @@ export class DemoPane extends LitElement {
       <p>
         <sl-switch size="small" @sl-change=${this.silence}>Station silent: the toggle is disabled, STOP stays live</sl-switch>
       </p>
+      <p><a href="/demo/bands.html">control's band and the dcc-ex UI's at 360px, 390px and 600px</a></p>
       <look-dialog label="Settings" size="medium">
         <p>The dialog shell.</p>
         <sl-button slot="footer" @click=${() => this.dialog.hide()}>Close</sl-button>
@@ -54,9 +55,17 @@ export class DemoPane extends LitElement {
   }
 }
 
+// The driving mode, a press with two states: its glyph and tooltip say which.
+const NEXT_DRIVING = {
+  person: { icon: 'robot', label: 'Automatic driving; switch to manual' },
+  robot: { icon: 'person', label: 'Manual driving; switch to automatic' },
+};
+
 document.addEventListener('look-press', (e) => {
-  console.log('look-press', (e.target as Element).localName, e.detail);
-  if ((e.target as Element).localName === 'look-gear') document.querySelector('demo-pane')!.dialog.show();
+  const el = e.target as Element;
+  console.log('look-press', el.localName, e.detail);
+  if (el.localName === 'look-gear') document.querySelector('demo-pane')?.dialog.show();
+  if (el instanceof LookBandPress && el.id === 'driving') Object.assign(el, NEXT_DRIVING[el.icon as keyof typeof NEXT_DRIVING]);
 });
 
 document.addEventListener('look-view', (e) => {
