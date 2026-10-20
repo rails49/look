@@ -1,7 +1,7 @@
 import { LitElement } from 'lit';
 /**
- * The rail: the views as its first group, then the command groups. At or below
- * the turn height it lies down as a strip along the top of the work pane.
+ * The rail: the views as its first group, then the command groups. On a short
+ * or narrow window it lies down as a strip along the top of the work pane.
  *
  * @slot views - The `look-view`s; each puts itself here.
  * @slot - The `look-group`s.

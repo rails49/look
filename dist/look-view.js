@@ -11,7 +11,7 @@ import { chromeTokens } from "./chrome.js";
 import { fire } from "./events.js";
 import { libraryOf } from "./icons.js";
 import { place } from "./place.js";
-import { TURN_HEIGHT_PX } from "./tokens.js";
+import { STRIP_MEDIA } from "./tokens.js";
 /**
  * One view on the rail: its icon with its word under it. Choosing a view that
  * is not current fires `look-view`; the app shows it and moves `current`.
@@ -78,7 +78,7 @@ let LookView = class LookView extends LitElement {
         transform: none;
       }
 
-      @media (max-height: ${unsafeCSS(TURN_HEIGHT_PX)}px) {
+      @media ${unsafeCSS(STRIP_MEDIA)} {
         :host {
           width: auto;
         }

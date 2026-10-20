@@ -5,7 +5,7 @@ import { chromeTokens } from './chrome.ts';
 import { fire, type LookViewDetail } from './events.ts';
 import { libraryOf } from './icons.ts';
 import { place } from './place.ts';
-import { TURN_HEIGHT_PX } from './tokens.ts';
+import { STRIP_MEDIA } from './tokens.ts';
 
 /**
  * One view on the rail: its icon with its word under it. Choosing a view that
@@ -72,7 +72,7 @@ export class LookView extends LitElement {
         transform: none;
       }
 
-      @media (max-height: ${unsafeCSS(TURN_HEIGHT_PX)}px) {
+      @media ${unsafeCSS(STRIP_MEDIA)} {
         :host {
           width: auto;
         }

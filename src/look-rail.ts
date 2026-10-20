@@ -2,11 +2,11 @@ import { LitElement, css, html, unsafeCSS } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { chromeTokens } from './chrome.ts';
 import { place } from './place.ts';
-import { TURN_HEIGHT_PX } from './tokens.ts';
+import { STRIP_MEDIA } from './tokens.ts';
 
 /**
- * The rail: the views as its first group, then the command groups. At or below
- * the turn height it lies down as a strip along the top of the work pane.
+ * The rail: the views as its first group, then the command groups. On a short
+ * or narrow window it lies down as a strip along the top of the work pane.
  *
  * @slot views - The `look-view`s; each puts itself here.
  * @slot - The `look-group`s.
@@ -51,7 +51,7 @@ export class LookRail extends LitElement {
         display: none;
       }
 
-      @media (max-height: ${unsafeCSS(TURN_HEIGHT_PX)}px) {
+      @media ${unsafeCSS(STRIP_MEDIA)} {
         :host {
           flex-direction: row;
           width: auto;
