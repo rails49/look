@@ -58,6 +58,11 @@ describe('look-about', () => {
     expect(seen).toHaveBeenCalledOnce();
   });
 
+  it('sets its box inside its own width, so its text is not cut short', async () => {
+    const about = await mount('<look-about name="otira" pressable></look-about>', 'look-about');
+    expect(getComputedStyle(inner(about, '.about')).marginLeft).not.toMatch(/^-/);
+  });
+
   it('draws an about that is not pressable as text', async () => {
     const about = await mount('<look-about name="otira" detail="N scale"></look-about>', 'look-about');
     expect(inner(about, 'button')).toBeNull();
@@ -83,6 +88,15 @@ describe('look-band', () => {
     expect(ui.textContent).toBe('control');
     const about = inner(band, 'slot[name="about"]');
     expect(ui.compareDocumentPosition(about) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  it('draws the UI name in the same type as what the UI is about', async () => {
+    const band = await mount('<look-band ui="control"><look-about name="otira"></look-about></look-band>', 'look-band');
+    const type = (el: Element) => {
+      const style = getComputedStyle(el);
+      return [style.fontSize, style.fontWeight];
+    };
+    expect(type(inner(band, '.ui'))).toEqual(type(inner(document.querySelector('look-about')!, '.about')));
   });
 
   it('draws the mark alone with no ui', async () => {
@@ -131,9 +145,9 @@ describe('look-band', () => {
 
 describe('where the band does not fit', () => {
   // happy-dom lays nothing out and observes no resize, so the test gives the
-  // band its width and calls the observer. The mark, the status items and
-  // track power take 200px; the UI name, Help and the gear take theirs while
-  // they show.
+  // band its width and calls the observer. The mark and track power take
+  // 140px, and what the UI is about 60px until it is cut; the UI name, Help
+  // and the gear take theirs while they show.
   const WIDTHS = { ui: 70, help: 40, gear: 40 };
   let resized: () => void;
 
@@ -154,22 +168,29 @@ describe('where the band does not fit', () => {
 
   const narrowing = async (ui: string) => {
     const band = await mount(
-      `<look-band ui="${ui}"><look-reading>3 trains</look-reading><look-power></look-power><look-gear></look-gear></look-band>`,
+      `<look-band ui="${ui}"><look-about name="otira"></look-about><look-reading>3 trains</look-reading><look-power></look-power><look-gear></look-gear></look-band>`,
       'look-band',
     );
     const nav = inner(band, 'nav');
     const parts = { ui: inner(band, '.ui'), help: inner(band, '.help'), gear: inner(band, 'slot[name="gear"]') };
+    // happy-dom applies no ::slotted rule, so the test reads the band's state.
+    const cut = () => nav.classList.contains('cut');
     const shown = () =>
       (Object.keys(parts) as (keyof typeof parts)[]).filter(
         (k) => parts[k] && getComputedStyle(parts[k]).display !== 'none',
       );
     let width = 0;
     Object.defineProperty(nav, 'clientWidth', { get: () => width });
-    Object.defineProperty(nav, 'scrollWidth', { get: () => shown().reduce((sum, k) => sum + WIDTHS[k], 200) });
+    Object.defineProperty(nav, 'scrollWidth', {
+      get: () => {
+        const rest = shown().reduce((sum, k) => sum + WIDTHS[k], 140);
+        return cut() ? Math.max(rest, width) : rest + 60;
+      },
+    });
     return (w: number) => {
       width = w;
       resized();
-      return shown();
+      return cut() ? [...shown(), 'about cut'] : shown();
     };
   };
 
@@ -180,7 +201,12 @@ describe('where the band does not fit', () => {
     expect(at(300)).toEqual(['help', 'gear']);
     expect(at(250)).toEqual(['gear']);
     expect(at(200)).toEqual([]);
-    expect(at(150)).toEqual([]);
+  });
+
+  it('cuts what the UI is about only once the gear is gone', async () => {
+    const at = await narrowing('control');
+    expect(at(150)).toEqual(['about cut']);
+    expect(at(400)).toEqual(['ui', 'help', 'gear']);
   });
 
   it('shows them again as the band widens', async () => {

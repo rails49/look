@@ -2879,14 +2879,19 @@ let Ye = class extends C {
   updated() {
     this.fit();
   }
-  /** Shows everything, then drops the UI name, Help and the gear in turn until the band fits. */
+  /**
+   * Shows everything, then drops the UI name, Help and the gear in turn until
+   * the band fits. Where it still does not fit, what the UI is about is cut.
+   */
   fit() {
-    const e = this.renderRoot.querySelector("nav"), t = [".ui", ".help", 'slot[name="gear"]'].map((o) => this.renderRoot.querySelector(o));
-    for (const o of t) o && (o.hidden = !1);
-    for (const o of t) {
-      if (e.scrollWidth <= e.clientWidth) break;
-      o && (o.hidden = !0);
+    const e = this.renderRoot.querySelector("nav"), t = () => e.scrollWidth <= e.clientWidth, o = [".ui", ".help", 'slot[name="gear"]'].map((s) => this.renderRoot.querySelector(s));
+    for (const s of o) s && (s.hidden = !1);
+    e.classList.remove("cut");
+    for (const s of o) {
+      if (t()) return;
+      s && (s.hidden = !0);
     }
+    t() || e.classList.add("cut");
   }
   render() {
     const e = this.help || (this.ui ? `https://github.com/rails49/${this.ui}` : "https://github.com/rails49");
@@ -2942,7 +2947,12 @@ Ye.styles = [
       }
 
       slot[name='about']::slotted(*) {
-        margin-left: 0.75rem;
+        margin-left: 0.35rem;
+        flex-shrink: 0;
+      }
+
+      .cut slot[name='about']::slotted(*) {
+        flex-shrink: 1;
       }
 
       /* Pushes the status items to the far right; with the gaps either side, at least 1rem. */
@@ -2993,9 +3003,8 @@ Ye.styles = [
       }
 
       .ui {
-        font-size: 1rem;
-        font-weight: 400;
-        letter-spacing: 0.04em;
+        font-size: 1.25rem;
+        font-weight: 600;
         white-space: nowrap;
       }
 
@@ -3091,7 +3100,6 @@ ze.styles = [
         border: none;
         border-radius: 4px;
         padding: 0.2rem 0.4rem;
-        margin-left: -0.4rem;
       }
 
       button.about {

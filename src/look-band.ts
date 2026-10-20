@@ -12,10 +12,10 @@ import { NARROW_WIDTH_PX } from './tokens.ts';
  * The band: the mark, the UI name and what the UI is about on the left; the
  * UI's items, the gear and Help on the right, in that order. Track power is
  * the last of the UI's items.
- * Where the band is too narrow for all of it, the status items and what the
- * UI is about cut their text short; then the band drops the UI name, Help and
- * the gear, in that order and only as far as it must. The mark, a band press
- * and track power keep their size.
+ * Where the band is too narrow for all of it, the status items cut their text
+ * short; then the band drops the UI name, Help and the gear, in that order and
+ * only as far as it must; then what the UI is about is cut short. The mark, a
+ * band press and track power keep their size.
  *
  * @slot about - A `look-about`.
  * @slot - Status items: `look-reading`, `look-chip`, `look-dot`, `look-band-press`.
@@ -57,7 +57,12 @@ export class LookBand extends LitElement {
       }
 
       slot[name='about']::slotted(*) {
-        margin-left: 0.75rem;
+        margin-left: 0.35rem;
+        flex-shrink: 0;
+      }
+
+      .cut slot[name='about']::slotted(*) {
+        flex-shrink: 1;
       }
 
       /* Pushes the status items to the far right; with the gaps either side, at least 1rem. */
@@ -108,9 +113,8 @@ export class LookBand extends LitElement {
       }
 
       .ui {
-        font-size: 1rem;
-        font-weight: 400;
-        letter-spacing: 0.04em;
+        font-size: 1.25rem;
+        font-weight: 600;
         white-space: nowrap;
       }
 
@@ -165,15 +169,21 @@ export class LookBand extends LitElement {
     this.fit();
   }
 
-  /** Shows everything, then drops the UI name, Help and the gear in turn until the band fits. */
+  /**
+   * Shows everything, then drops the UI name, Help and the gear in turn until
+   * the band fits. Where it still does not fit, what the UI is about is cut.
+   */
   private fit() {
     const nav = this.renderRoot.querySelector('nav')!;
+    const fits = () => nav.scrollWidth <= nav.clientWidth;
     const drops = ['.ui', '.help', 'slot[name="gear"]'].map((s) => this.renderRoot.querySelector<HTMLElement>(s));
     for (const el of drops) if (el) el.hidden = false;
+    nav.classList.remove('cut');
     for (const el of drops) {
-      if (nav.scrollWidth <= nav.clientWidth) break;
+      if (fits()) return;
       if (el) el.hidden = true;
     }
+    if (!fits()) nav.classList.add('cut');
   }
 
   override render() {
