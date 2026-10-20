@@ -3,7 +3,7 @@ import { customElement, property } from 'lit/decorators.js';
 import { chromeTokens } from './chrome.ts';
 import { firePress } from './events.ts';
 import { press, pressStyles } from './press.ts';
-import { TURN_HEIGHT_PX } from './tokens.ts';
+import { STRIP_MEDIA } from './tokens.ts';
 
 /**
  * A command on the rail: an icon with its label and key as the tooltip, or a
@@ -54,7 +54,7 @@ export class LookCommand extends LitElement {
         letter-spacing: 0.06em;
       }
 
-      @media (max-height: ${unsafeCSS(TURN_HEIGHT_PX)}px) {
+      @media ${unsafeCSS(STRIP_MEDIA)} {
         :host {
           width: auto;
         }

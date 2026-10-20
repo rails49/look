@@ -7,7 +7,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 import { LitElement, css, html, unsafeCSS } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { chromeTokens } from "./chrome.js";
-import { TURN_HEIGHT_PX } from "./tokens.js";
+import { STRIP_MEDIA } from "./tokens.js";
 /**
  * A group of commands on the rail. `label` names it to a screen reader; `end`
  * pins it to the rail's far end.
@@ -38,7 +38,7 @@ let LookGroup = class LookGroup extends LitElement {
         margin-top: auto;
       }
 
-      @media (max-height: ${unsafeCSS(TURN_HEIGHT_PX)}px) {
+      @media ${unsafeCSS(STRIP_MEDIA)} {
         :host {
           flex-direction: row;
           width: auto;

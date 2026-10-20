@@ -1,7 +1,7 @@
 import { LitElement, css, html, unsafeCSS } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { chromeTokens } from './chrome.ts';
-import { TURN_HEIGHT_PX } from './tokens.ts';
+import { STRIP_MEDIA } from './tokens.ts';
 
 /**
  * A group of commands on the rail. `label` names it to a screen reader; `end`
@@ -32,7 +32,7 @@ export class LookGroup extends LitElement {
         margin-top: auto;
       }
 
-      @media (max-height: ${unsafeCSS(TURN_HEIGHT_PX)}px) {
+      @media ${unsafeCSS(STRIP_MEDIA)} {
         :host {
           flex-direction: row;
           width: auto;

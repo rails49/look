@@ -15,8 +15,15 @@ export const TOKENS = {
 /** Window height at or below which the shell and rail turn into a strip. */
 export const TURN_HEIGHT_PX = 640;
 
-/** Window width at or below which the band draws the square mark. */
+/** Window width at or below which the band draws the square mark and the rail turns into a strip. */
 export const NARROW_WIDTH_PX = 600;
+
+/**
+ * The media query under which the shell and rail turn into a strip: a short or
+ * a narrow window, written as "not tall and wide" because happy-dom requires
+ * every query in a comma list to match.
+ */
+export const STRIP_MEDIA = `not all and (height > ${TURN_HEIGHT_PX}px) and (width > ${NARROW_WIDTH_PX}px)`;
 
 /** The tokens as declarations, for a `:root` or `:host` block. */
 export const tokenDeclarations = Object.entries(TOKENS)

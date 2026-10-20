@@ -9,7 +9,7 @@ import { customElement, property } from 'lit/decorators.js';
 import { chromeTokens } from "./chrome.js";
 import { firePress } from "./events.js";
 import { press, pressStyles } from "./press.js";
-import { TURN_HEIGHT_PX } from "./tokens.js";
+import { STRIP_MEDIA } from "./tokens.js";
 /**
  * A command on the rail: an icon with its label and key as the tooltip, or a
  * `word`. `pressed` marks the command that is in force, such as the editor's
@@ -58,7 +58,7 @@ let LookCommand = class LookCommand extends LitElement {
         letter-spacing: 0.06em;
       }
 
-      @media (max-height: ${unsafeCSS(TURN_HEIGHT_PX)}px) {
+      @media ${unsafeCSS(STRIP_MEDIA)} {
         :host {
           width: auto;
         }

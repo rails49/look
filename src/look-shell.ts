@@ -1,11 +1,11 @@
 import { LitElement, css, html, unsafeCSS } from 'lit';
 import { customElement } from 'lit/decorators.js';
 import { chromeTokens } from './chrome.ts';
-import { TURN_HEIGHT_PX } from './tokens.ts';
+import { STRIP_MEDIA } from './tokens.ts';
 
 /**
  * The page: the band on top, the rail on the left, the work pane beside it.
- * With no rail, the work pane takes the width. At or below the turn height the
+ * With no rail, the work pane takes the width. On a short or narrow window the
  * rail lies along the top of the work pane.
  *
  * @slot band - A `look-band`.
@@ -37,7 +37,7 @@ export class LookShell extends LitElement {
         position: relative;
       }
 
-      @media (max-height: ${unsafeCSS(TURN_HEIGHT_PX)}px) {
+      @media ${unsafeCSS(STRIP_MEDIA)} {
         .body {
           flex-direction: column;
         }

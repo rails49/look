@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import '../src/index.ts';
+import { NARROW_WIDTH_PX } from '../src/index.ts';
+import type { Window } from 'happy-dom';
 import type { LitElement } from 'lit';
 import { libraryOf } from '../src/icons.ts';
 import { press } from '../src/testing.ts';
@@ -12,6 +13,9 @@ async function mount<T extends Element = HTMLElement>(markup: string, selector: 
 }
 
 const inner = (el: Element, selector: string) => el.shadowRoot!.querySelector(selector) as HTMLElement;
+
+const setViewport = (width: number, height: number) =>
+  (window as unknown as Window).happyDOM.setViewport({ width, height });
 
 afterEach(() => {
   document.body.innerHTML = '';
@@ -131,6 +135,48 @@ describe('a narrow band', () => {
     const band = await mount('<look-band ui="dccex"></look-band>', 'look-band');
     const parents = ['.lead', 'slot:not([name])', '.tail'].map((s) => inner(band, s).parentElement);
     expect(parents).toEqual([inner(band, 'nav'), inner(band, 'nav'), inner(band, 'nav')]);
+  });
+});
+
+describe('the strip', () => {
+  const lying = async (width: number, height: number) => {
+    setViewport(width, height);
+    const shell = await mount(
+      `<look-shell>
+        <look-rail><look-view name="run"></look-view><look-group><look-command word="GO"></look-command></look-group></look-rail>
+      </look-shell>`,
+      'look-shell',
+    );
+    const row = (el: Element) => getComputedStyle(el).flexDirection === 'row';
+    const view = document.querySelector('look-view')!;
+    const command = document.querySelector('look-command')!;
+    return [
+      getComputedStyle(inner(shell, '.body')).flexDirection === 'column',
+      row(document.querySelector('look-rail')!),
+      row(document.querySelector('look-group')!),
+      getComputedStyle(view).width === 'auto',
+      getComputedStyle(command).width === 'auto',
+    ];
+  };
+
+  afterEach(() => setViewport(1024, 768));
+
+  it('lies along the top on an upright phone', async () => {
+    expect(await lying(390, 844)).toEqual([true, true, true, true, true]);
+  });
+
+  it('lies along the top on a phone held sideways', async () => {
+    expect(await lying(844, 390)).toEqual([true, true, true, true, true]);
+  });
+
+  it('stands down the left on a window wide and tall enough', async () => {
+    expect(await lying(1024, 768)).toEqual([false, false, false, false, false]);
+  });
+
+  it('turns at the width the band draws the square mark', async () => {
+    expect(NARROW_WIDTH_PX).toBe(600);
+    expect(await lying(NARROW_WIDTH_PX, 844)).toEqual([true, true, true, true, true]);
+    expect(await lying(NARROW_WIDTH_PX + 1, 844)).toEqual([false, false, false, false, false]);
   });
 });
 
