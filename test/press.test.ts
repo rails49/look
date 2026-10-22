@@ -215,6 +215,31 @@ describe('look-view', () => {
     press(view);
     expect(seen).toHaveBeenCalledOnce();
   });
+
+  it('stays focusable when disabled, says why in its tooltip and to a screen reader, and fires nothing', async () => {
+    document.body.innerHTML = '<look-view name="edit" icon="pencil" label="Edit" disabled reason="track power is on"></look-view>';
+    const view = document.querySelector('look-view')!;
+    await view.updateComplete;
+    const seen = listen(view, 'look-view');
+    const button = named(view, 'Edit');
+    expect(button.getAttribute('aria-disabled')).toBe('true');
+    expect(button.hasAttribute('disabled')).toBe(false);
+    expect(tooltip(button)).toBe('track power is on');
+    expect(button.getAttribute('aria-description')).toBe('track power is on');
+    press(view);
+    expect(seen).not.toHaveBeenCalled();
+    view.disabled = false;
+    await view.updateComplete;
+    press(view);
+    expect(seen).toHaveBeenCalledOnce();
+  });
+
+  it('shows no tooltip while enabled, its label being drawn', async () => {
+    document.body.innerHTML = '<look-view name="edit" icon="pencil" label="Edit" reason="track power is on"></look-view>';
+    const view = document.querySelector('look-view')!;
+    await view.updateComplete;
+    expect(named(view, 'Edit').closest('sl-tooltip')!.hasAttribute('disabled')).toBe(true);
+  });
 });
 
 describe('press()', () => {
