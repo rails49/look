@@ -9,7 +9,7 @@ A button in the chrome that fires an event when a person presses it: a command, 
 _Avoid_: button (for the concept), action
 
 **Disabled**:
-A press that fires nothing. It stays reachable by keyboard and hover so its tooltip can say why ([ADR-0001](docs/adr/0001-native-button-for-presses.md)).
+A press or a view that fires nothing. It stays reachable by keyboard and hover so its tooltip can say why ([ADR-0001](docs/adr/0001-native-button-for-presses.md)).
 _Avoid_: held, off, inactive
 
 **Mark**:
@@ -25,5 +25,5 @@ The link at the band's far right to the user docs of the UI that is showing. It 
 _Avoid_: docs button, GitHub link
 
 **Reason**:
-The text that says why a press is disabled. It takes the label's place in the tooltip ([ADR-0001](docs/adr/0001-native-button-for-presses.md)).
+The text that says why a press or a view is disabled. It takes the label's place in a press's tooltip, and is a view's only tooltip ([ADR-0001](docs/adr/0001-native-button-for-presses.md)).
 _Avoid_: why, hint
