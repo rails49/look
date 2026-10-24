@@ -14,13 +14,14 @@ import { MARK_SQUARE, MARK_WIDE } from "./icons.js";
 import { place } from "./place.js";
 import { NARROW_WIDTH_PX } from "./tokens.js";
 /**
- * The band: the mark, the UI name and what the UI is about on the left; the
- * UI's items, the gear and Help on the right, in that order. Track power is
- * the last of the UI's items.
+ * The band: the mark, the UI name and what the UI is about on the left, with a
+ * thin rule between the UI name and what the UI is about; the UI's items, the
+ * gear and Help on the right, in that order. Track power is the last of the
+ * UI's items.
  * Where the band is too narrow for all of it, the status items cut their text
- * short; then the band drops the UI name, Help and the gear, in that order and
- * only as far as it must; then what the UI is about is cut short. The mark, a
- * band press and track power keep their size.
+ * short; then the band drops the UI name with the rule, Help and the gear, in
+ * that order and only as far as it must; then what the UI is about is cut
+ * short. The mark, a band press and track power keep their size.
  *
  * @slot about - A `look-about`.
  * @slot - Status items: `look-reading`, `look-chip`, `look-dot`, `look-band-press`.
@@ -58,6 +59,16 @@ let LookBand = class LookBand extends LitElement {
         height: 100%;
         padding: 0 1rem;
         box-sizing: border-box;
+      }
+
+      /* About the height of the UI name's capitals. */
+      .rule {
+        flex-shrink: 0;
+        width: 1px;
+        height: 0.875rem;
+        margin-left: 0.35rem;
+        background: var(--band-ink);
+        opacity: 0.5;
       }
 
       slot[name='about']::slotted(*) {
@@ -170,21 +181,24 @@ let LookBand = class LookBand extends LitElement {
         this.fit();
     }
     /**
-     * Shows everything, then drops the UI name, Help and the gear in turn until
-     * the band fits. Where it still does not fit, what the UI is about is cut.
+     * Shows everything, then drops the UI name with the rule, Help and the gear
+     * in turn until the band fits. Where it still does not fit, what the UI is
+     * about is cut.
      */
     fit() {
         const nav = this.renderRoot.querySelector('nav');
         const fits = () => nav.scrollWidth <= nav.clientWidth;
-        const drops = ['.ui', '.help', 'slot[name="gear"]'].map((s) => this.renderRoot.querySelector(s));
-        for (const el of drops)
-            if (el)
+        const drops = ['.ui, .rule', '.help', 'slot[name="gear"]'].map((s) => [
+            ...this.renderRoot.querySelectorAll(s),
+        ]);
+        for (const els of drops)
+            for (const el of els)
                 el.hidden = false;
         nav.classList.remove('cut');
-        for (const el of drops) {
+        for (const els of drops) {
             if (fits())
                 return;
-            if (el)
+            for (const el of els)
                 el.hidden = true;
         }
         if (!fits())
@@ -193,7 +207,7 @@ let LookBand = class LookBand extends LitElement {
     render() {
         const help = this.help || (this.ui ? `https://github.com/rails49/${this.ui}` : 'https://github.com/rails49');
         return html `
-      <nav @slotchange=${() => this.fit()}>
+      <nav @slotchange=${() => this.requestUpdate()}>
         <div class="lead">
           <sl-tooltip content="rails49.org" placement="bottom" hoist>
             <a class="mark" href="https://rails49.org" target="_blank" rel="noopener" aria-label="rails49.org">
@@ -203,6 +217,9 @@ let LookBand = class LookBand extends LitElement {
           </sl-tooltip>
           ${this.ui ? html `<span class="ui">${this.ui}</span>` : nothing}
         </div>
+        ${this.ui && this.querySelector(':scope > [slot="about"]')
+            ? html `<span class="rule" aria-hidden="true"></span>`
+            : nothing}
         <slot name="about"></slot>
         <span class="space"></span>
         <slot></slot>
