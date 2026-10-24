@@ -102,8 +102,8 @@ describe('look-band', () => {
   it('draws a rule between the UI name and what the UI is about', async () => {
     const band = await mount('<look-band ui="control"><look-about name="otira"></look-about></look-band>', 'look-band');
     const [ui, rule, about] = ['.ui', '.rule', 'slot[name="about"]'].map((s) => inner(band, s));
-    expect(ui!.compareDocumentPosition(rule!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-    expect(rule!.compareDocumentPosition(about!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(ui.compareDocumentPosition(rule) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(rule.compareDocumentPosition(about) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 
   it('draws no rule with no ui', async () => {
