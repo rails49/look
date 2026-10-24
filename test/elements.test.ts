@@ -99,6 +99,43 @@ describe('look-band', () => {
     expect(type(inner(band, '.ui'))).toEqual(type(inner(document.querySelector('look-about')!, '.about')));
   });
 
+  it('draws a rule between the UI name and what the UI is about', async () => {
+    const band = await mount('<look-band ui="control"><look-about name="otira"></look-about></look-band>', 'look-band');
+    const [ui, rule, about] = ['.ui', '.rule', 'slot[name="about"]'].map((s) => inner(band, s));
+    expect(ui!.compareDocumentPosition(rule!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(rule!.compareDocumentPosition(about!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  it('draws no rule with no ui', async () => {
+    const band = await mount('<look-band><look-about name="otira"></look-about></look-band>', 'look-band');
+    expect(inner(band, '.rule')).toBeNull();
+  });
+
+  it('draws no rule with nothing in the about slot', async () => {
+    const band = await mount('<look-band ui="control"></look-band>', 'look-band');
+    expect(inner(band, '.rule')).toBeNull();
+  });
+
+  it('draws the rule while something is in the about slot', async () => {
+    const band = await mount<LitElement>('<look-band ui="control"></look-band>', 'look-band');
+    const about = document.createElement('look-about');
+    about.slot = 'about';
+    band.append(about);
+    await new Promise((r) => setTimeout(r));
+    await band.updateComplete;
+    expect(inner(band, '.rule')).not.toBeNull();
+    about.remove();
+    await new Promise((r) => setTimeout(r));
+    await band.updateComplete;
+    expect(inner(band, '.rule')).toBeNull();
+  });
+
+  it('hides the rule from assistive technology and from the keyboard', async () => {
+    const band = await mount('<look-band ui="control"><look-about name="otira"></look-about></look-band>', 'look-band');
+    const rule = inner(band, '.rule');
+    expect([rule.getAttribute('aria-hidden'), rule.tabIndex]).toEqual(['true', -1]);
+  });
+
   it('draws the mark alone with no ui', async () => {
     const band = await mount('<look-band></look-band>', 'look-band');
     expect(inner(band, 'a.mark')).not.toBeNull();
@@ -146,9 +183,9 @@ describe('look-band', () => {
 describe('where the band does not fit', () => {
   // happy-dom lays nothing out and observes no resize, so the test gives the
   // band its width and calls the observer. The mark and track power take
-  // 140px, and what the UI is about 60px until it is cut; the UI name, Help
-  // and the gear take theirs while they show.
-  const WIDTHS = { ui: 70, help: 40, gear: 40 };
+  // 140px, and what the UI is about 60px until it is cut; the UI name, the
+  // rule, Help and the gear take theirs while they show.
+  const WIDTHS = { ui: 70, rule: 20, help: 40, gear: 40 };
   let resized: () => void;
 
   beforeEach(() => {
@@ -172,7 +209,12 @@ describe('where the band does not fit', () => {
       'look-band',
     );
     const nav = inner(band, 'nav');
-    const parts = { ui: inner(band, '.ui'), help: inner(band, '.help'), gear: inner(band, 'slot[name="gear"]') };
+    const parts = {
+      ui: inner(band, '.ui'),
+      rule: inner(band, '.rule'),
+      help: inner(band, '.help'),
+      gear: inner(band, 'slot[name="gear"]'),
+    };
     // happy-dom applies no ::slotted rule, so the test reads the band's state.
     const cut = () => nav.classList.contains('cut');
     const shown = () =>
@@ -194,10 +236,11 @@ describe('where the band does not fit', () => {
     };
   };
 
-  it('drops the UI name, then Help, then the gear, only as far as it must', async () => {
+  it('drops the UI name and the rule, then Help, then the gear, only as far as it must', async () => {
     const at = await narrowing('control');
-    expect(at(400)).toEqual(['ui', 'help', 'gear']);
-    expect(at(350)).toEqual(['ui', 'help', 'gear']);
+    expect(at(400)).toEqual(['ui', 'rule', 'help', 'gear']);
+    expect(at(370)).toEqual(['ui', 'rule', 'help', 'gear']);
+    expect(at(360)).toEqual(['help', 'gear']);
     expect(at(300)).toEqual(['help', 'gear']);
     expect(at(250)).toEqual(['gear']);
     expect(at(200)).toEqual([]);
@@ -206,14 +249,14 @@ describe('where the band does not fit', () => {
   it('cuts what the UI is about only once the gear is gone', async () => {
     const at = await narrowing('control');
     expect(at(150)).toEqual(['about cut']);
-    expect(at(400)).toEqual(['ui', 'help', 'gear']);
+    expect(at(400)).toEqual(['ui', 'rule', 'help', 'gear']);
   });
 
   it('shows them again as the band widens', async () => {
     const at = await narrowing('control');
     at(150);
     expect(at(300)).toEqual(['help', 'gear']);
-    expect(at(400)).toEqual(['ui', 'help', 'gear']);
+    expect(at(400)).toEqual(['ui', 'rule', 'help', 'gear']);
   });
 
   it('drops Help first where there is no UI name', async () => {
