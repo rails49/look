@@ -2869,8 +2869,8 @@ var Rr = Object.defineProperty, Mr = Object.getOwnPropertyDescriptor, fo = (e, t
 function Tr(e, t) {
   if (!e) return { href: "https://rails49.org", host: "rails49.org" };
   if (t.protocol === "https:") {
-    const o = t.host.startsWith(`${e}.`) ? t.host.slice(`${e}.`.length) : t.host;
-    return { href: `https://${o}/`, host: o };
+    const o = `${e}.`, s = t.host.startsWith(o) ? t.host.slice(o.length) : t.host;
+    return { href: `https://${s}/`, host: s };
   }
   return { href: `http://${t.hostname}/`, host: t.hostname };
 }

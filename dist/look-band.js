@@ -13,15 +13,16 @@ import { chromeTokens } from "./chrome.js";
 import { MARK_SQUARE, MARK_WIDE } from "./icons.js";
 import { place } from "./place.js";
 import { BAND_HEIGHT_PX, NARROW_WIDTH_PX } from "./tokens.js";
-/** Where the mark links, and the host it names, for UI name `ui` on the page at `at`. */
-function upFrom(ui, at) {
+/** Where the mark links, and the host it names, for UI name `ui` on `page`. */
+function markLink(ui, page) {
     if (!ui)
         return { href: 'https://rails49.org', host: 'rails49.org' };
-    if (at.protocol === 'https:') {
-        const host = at.host.startsWith(`${ui}.`) ? at.host.slice(`${ui}.`.length) : at.host;
+    if (page.protocol === 'https:') {
+        const prefix = `${ui}.`;
+        const host = page.host.startsWith(prefix) ? page.host.slice(prefix.length) : page.host;
         return { href: `https://${host}/`, host };
     }
-    return { href: `http://${at.hostname}/`, host: at.hostname };
+    return { href: `http://${page.hostname}/`, host: page.hostname };
 }
 /**
  * The band: the mark, the UI name and what the UI is about on the left, with a
@@ -215,7 +216,7 @@ let LookBand = class LookBand extends LitElement {
             nav.classList.add('cut');
     }
     render() {
-        const up = upFrom(this.ui, location);
+        const up = markLink(this.ui, location);
         const help = this.help || (this.ui ? `https://github.com/rails49/${this.ui}` : 'https://github.com/rails49');
         return html `
       <nav @slotchange=${() => this.requestUpdate()}>

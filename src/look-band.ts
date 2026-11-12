@@ -8,14 +8,15 @@ import { MARK_SQUARE, MARK_WIDE } from './icons.ts';
 import { place } from './place.ts';
 import { BAND_HEIGHT_PX, NARROW_WIDTH_PX } from './tokens.ts';
 
-/** Where the mark links, and the host it names, for UI name `ui` on the page at `at`. */
-function upFrom(ui: string, at: Location): { href: string; host: string } {
+/** Where the mark links, and the host it names, for UI name `ui` on `page`. */
+function markLink(ui: string, page: Location): { href: string; host: string } {
   if (!ui) return { href: 'https://rails49.org', host: 'rails49.org' };
-  if (at.protocol === 'https:') {
-    const host = at.host.startsWith(`${ui}.`) ? at.host.slice(`${ui}.`.length) : at.host;
+  if (page.protocol === 'https:') {
+    const prefix = `${ui}.`;
+    const host = page.host.startsWith(prefix) ? page.host.slice(prefix.length) : page.host;
     return { href: `https://${host}/`, host };
   }
-  return { href: `http://${at.hostname}/`, host: at.hostname };
+  return { href: `http://${page.hostname}/`, host: page.hostname };
 }
 
 /**
@@ -211,7 +212,7 @@ export class LookBand extends LitElement {
   }
 
   override render() {
-    const up = upFrom(this.ui, location);
+    const up = markLink(this.ui, location);
     const help = this.help || (this.ui ? `https://github.com/rails49/${this.ui}` : 'https://github.com/rails49');
     return html`
       <nav @slotchange=${() => this.requestUpdate()}>

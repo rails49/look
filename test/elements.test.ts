@@ -17,6 +17,8 @@ const inner = (el: Element, selector: string) => el.shadowRoot!.querySelector(se
 const setViewport = (width: number, height: number) =>
   (window as unknown as Window).happyDOM.setViewport({ width, height });
 
+const setURL = (url: string) => (window as unknown as Window).happyDOM.setURL(url);
+
 afterEach(() => {
   document.body.innerHTML = '';
 });
@@ -72,7 +74,7 @@ describe('look-about', () => {
 
 describe('look-band', () => {
   describe('draws the mark as a link to the page one level up, in a new tab', () => {
-    afterEach(() => (window as unknown as Window).happyDOM.setURL('http://localhost:3000/'));
+    afterEach(() => setURL('http://localhost:3000/'));
 
     it.each([
       ['control', 'http://192.168.1.20:8081/', 'http://192.168.1.20/', '192.168.1.20'],
@@ -86,7 +88,7 @@ describe('look-band', () => {
       ['', 'http://pi49.local:8081/', 'https://rails49.org', 'rails49.org'],
       ['', 'https://rails49.org/', 'https://rails49.org', 'rails49.org'],
     ])('ui="%s" at %s links to %s', async (ui, url, href, name) => {
-      (window as unknown as Window).happyDOM.setURL(url);
+      setURL(url);
       const band = await mount(ui ? `<look-band ui="${ui}"></look-band>` : '<look-band></look-band>', 'look-band');
       const mark = inner(band, 'a.mark');
       expect([

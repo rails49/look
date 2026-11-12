@@ -65,7 +65,7 @@ Typeface and type scale are Shoelace's theme's.
 
   | Page | Mark links to | Example |
   |---|---|---|
-  | a UI over HTTP | `http://<host name>/`, port 80 on the same name or address | `http://pi49.local:8081/` → `http://pi49.local/` |
+  | a UI over HTTP | the page's host name or address, port 80 | `http://pi49.local:8081/` → `http://pi49.local/` |
   | a UI over HTTPS at `<UI name>.<rest>` | `https://<rest>/` | `https://control.gleis49.org/` → `https://gleis49.org/` |
   | a UI over HTTPS at any other host | the root of the same host and port | `https://gleis49.org/box/` → `https://gleis49.org/` |
   | no UI name: the installation page, the landing page | `https://rails49.org` | |
