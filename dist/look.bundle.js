@@ -845,7 +845,7 @@ const Cl = {
   "--rail-button": "44px",
   "--power-on": "#4ade80",
   "--stop": "#ef4444"
-}, Ql = 640, cs = 600, ot = `not all and (height > ${Ql}px) and (width > ${cs}px)`, El = Object.entries(Cl).map(([e, t]) => `${e}: ${t};`).join(`
+}, Bh = 60, Ql = 640, cs = 600, ot = `not all and (height > ${Ql}px) and (width > ${cs}px)`, El = Object.entries(Cl).map(([e, t]) => `${e}: ${t};`).join(`
 `), M = A`
   :host {
     ${ce(El)}
@@ -2931,7 +2931,7 @@ Ge.styles = [
   A`
       :host {
         display: block;
-        height: 60px;
+        height: ${ce(Bh)}px;
         flex-shrink: 0;
         position: relative;
         z-index: 100;

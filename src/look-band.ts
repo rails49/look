@@ -6,7 +6,7 @@ import '@shoelace-style/shoelace/dist/components/tooltip/tooltip.js';
 import { chromeTokens } from './chrome.ts';
 import { MARK_SQUARE, MARK_WIDE } from './icons.ts';
 import { place } from './place.ts';
-import { NARROW_WIDTH_PX } from './tokens.ts';
+import { BAND_HEIGHT_PX, NARROW_WIDTH_PX } from './tokens.ts';
 
 /**
  * The band: the mark, the UI name and what the UI is about on the left, with a
@@ -38,7 +38,7 @@ export class LookBand extends LitElement {
     css`
       :host {
         display: block;
-        height: 60px;
+        height: ${unsafeCSS(BAND_HEIGHT_PX)}px;
         flex-shrink: 0;
         position: relative;
         z-index: 100;
