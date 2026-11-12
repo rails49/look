@@ -1,8 +1,9 @@
 // Writes dist/look.css: Shoelace's light theme, its dark theme switched on by
-// the OS setting, the chrome's tokens and the theme layer's Shoelace values.
+// the OS setting, the chrome's tokens, the theme layer's Shoelace values, and
+// the band's space before look-band is defined.
 import { readFileSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
-import { SHOELACE_VALUES, tokenDeclarations } from '../src/tokens.ts';
+import { BAND_HEIGHT_PX, SHOELACE_VALUES, tokenDeclarations } from '../src/tokens.ts';
 
 const themes = createRequire(import.meta.url).resolve('@shoelace-style/shoelace/dist/themes/light.css');
 const light = readFileSync(themes, 'utf8');
@@ -24,6 +25,13 @@ ${light}
 :root {
 ${tokenDeclarations.replace(/^/gm, '  ')}
 ${shoelaceValues}
+}
+
+/* The band's space until the bundle defines look-band, so the page does not move. */
+look-band:not(:defined) {
+  display: block;
+  height: ${BAND_HEIGHT_PX}px;
+  background: var(--band);
 }
 `;
 

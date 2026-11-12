@@ -964,3 +964,10 @@
   --sl-tooltip-color: var(--band-ink);
   --sl-tooltip-font-size: var(--sl-font-size-x-small);
 }
+
+/* The band's space until the bundle defines look-band, so the page does not move. */
+look-band:not(:defined) {
+  display: block;
+  height: 60px;
+  background: var(--band);
+}
