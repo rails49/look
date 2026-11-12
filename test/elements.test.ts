@@ -71,15 +71,33 @@ describe('look-about', () => {
 });
 
 describe('look-band', () => {
-  it('draws the mark as a link to rails49.org in a new tab', async () => {
-    const band = await mount('<look-band ui="control"></look-band>', 'look-band');
-    const mark = inner(band, 'a.mark');
-    expect([mark.getAttribute('href'), mark.getAttribute('target'), mark.getAttribute('rel')]).toEqual([
-      'https://rails49.org',
-      '_blank',
-      'noopener',
-    ]);
-    expect(mark.querySelectorAll('svg')).toHaveLength(2);
+  describe('draws the mark as a link to the page one level up, in a new tab', () => {
+    afterEach(() => (window as unknown as Window).happyDOM.setURL('http://localhost:3000/'));
+
+    it.each([
+      ['control', 'http://192.168.1.20:8081/', 'http://192.168.1.20/', '192.168.1.20'],
+      ['control', 'http://pi49.local:8081/', 'http://pi49.local/', 'pi49.local'],
+      ['control', 'https://control.gleis49.org/', 'https://gleis49.org/', 'gleis49.org'],
+      ['occupancy', 'https://occupancy.rails49.org/', 'https://rails49.org/', 'rails49.org'],
+      ['status', 'http://pi49.local/box/', 'http://pi49.local/', 'pi49.local'],
+      ['status', 'https://gleis49.org/box/', 'https://gleis49.org/', 'gleis49.org'],
+      ['control', 'https://localhost:5173/', 'https://localhost:5173/', 'localhost:5173'],
+      ['', 'https://gleis49.org/', 'https://rails49.org', 'rails49.org'],
+      ['', 'http://pi49.local:8081/', 'https://rails49.org', 'rails49.org'],
+      ['', 'https://rails49.org/', 'https://rails49.org', 'rails49.org'],
+    ])('ui="%s" at %s links to %s', async (ui, url, href, name) => {
+      (window as unknown as Window).happyDOM.setURL(url);
+      const band = await mount(ui ? `<look-band ui="${ui}"></look-band>` : '<look-band></look-band>', 'look-band');
+      const mark = inner(band, 'a.mark');
+      expect([
+        mark.getAttribute('href'),
+        mark.getAttribute('target'),
+        mark.getAttribute('rel'),
+        mark.getAttribute('aria-label'),
+        mark.closest('sl-tooltip')!.getAttribute('content'),
+      ]).toEqual([href, '_blank', 'noopener', name, name]);
+      expect(mark.querySelectorAll('svg')).toHaveLength(2);
+    });
   });
 
   it('draws the UI name after the mark and ahead of the about slot', async () => {
