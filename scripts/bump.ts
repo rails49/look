@@ -1,6 +1,6 @@
 // Moves a consumer's checkout to a release of look: every `rails49/look#v…` and
-// `rails49/look@v…` names the tag, and every committed look.bundle.js is
-// replaced by this release's. Prints the files it changed; none means the
+// `rails49/look@v…` names the tag, and every committed look.bundle.js and
+// look.css is replaced by this release's. Prints the files it changed; none means the
 // consumer does not take look yet, or is already at the tag. An accepted ADR
 // and a research note are records of their day (org ADR-0017), so no file
 // under a docs/adr/ or docs/research/ is touched.
@@ -22,12 +22,13 @@ function* files(dir: string): Generator<string> {
   }
 }
 
-export function bump(dir: string, tag: string, bundle: Buffer): string[] {
+export function bump(dir: string, tag: string, bundle: Buffer, css: Buffer): string[] {
   const changed: string[] = [];
   for (const path of files(dir)) {
     const before = readFileSync(path);
     let after: Buffer = before;
     if (path.endsWith('/look.bundle.js')) after = bundle;
+    else if (path.endsWith('/look.css')) after = css;
     else {
       // Only text that names a release is rewritten; other files, binaries
       // among them, are left byte for byte.
@@ -50,5 +51,6 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     process.exit(2);
   }
   const bundle = readFileSync(new URL('../dist/look.bundle.js', import.meta.url));
-  for (const path of bump(dir, tag, bundle)) console.log(path);
+  const css = readFileSync(new URL('../dist/look.css', import.meta.url));
+  for (const path of bump(dir, tag, bundle, css)) console.log(path);
 }
