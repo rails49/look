@@ -12,6 +12,9 @@ export const TOKENS = {
   '--stop': '#ef4444',
 } as const;
 
+/** The band's height. `look-band` draws it, and `look.css` holds the space for it before the element is defined. */
+export const BAND_HEIGHT_PX = 60;
+
 /** Window height at or below which the shell and rail turn into a strip. */
 export const TURN_HEIGHT_PX = 640;
 
