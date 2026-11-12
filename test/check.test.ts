@@ -41,4 +41,16 @@ describe('look-check', () => {
   it('passes ::part() on the app\'s own elements', () => {
     expect(lines('a.css', 'my-view::part(body) { color: red }')).toEqual([]);
   });
+
+  it('passes a static page that links look.css and loads the bundle', () => {
+    const page = [
+      '<head>',
+      '  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rails49/look@v0.11.0/dist/look.css">',
+      '  <script type="module" src="https://cdn.jsdelivr.net/gh/rails49/look@v0.11.0/dist/look.bundle.js"></script>',
+      '  <style>main { color: var(--sl-color-neutral-700); }</style>',
+      '</head>',
+      '<body><look-band></look-band><main></main></body>',
+    ].join('\n');
+    expect(lines('index.html', page)).toEqual([]);
+  });
 });

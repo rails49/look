@@ -67,12 +67,23 @@ shadow root, so it keeps passing when look changes what it draws.
 ## A static page
 
 ```html
-<script type="module" src="https://cdn.jsdelivr.net/gh/rails49/look@v0.5.0/dist/look.bundle.js"></script>
+<head>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rails49/look@v0.11.0/dist/look.css">
+  <script type="module" src="https://cdn.jsdelivr.net/gh/rails49/look@v0.11.0/dist/look.bundle.js"></script>
+</head>
 ```
 
 `dist/look.bundle.js` holds Lit, the Shoelace components the chrome uses,
 `look.css` and the chrome's glyphs. A page that loads it loads no other copy of
 the elements.
+
+The link is there for the first paint. A module script runs only after the page
+has drawn once, so a page with the bundle alone first draws without look's
+styling, and without the band, which then pushes the page down. The browser
+waits for a linked stylesheet before drawing; `look.css` fetches nothing else,
+and holds the band's space until the bundle defines `look-band`. The bundle
+still adds `look.css` itself, so a page without the link works, with that one
+unstyled paint.
 
 ## The gate
 
