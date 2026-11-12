@@ -52,13 +52,23 @@ Typeface and type scale are Shoelace's theme's.
 - The chrome is a band across the top and a rail down the left. The band is
   about the whole of the system the UI is about. The rail carries what the
   current view offers, and exists wherever a UI has commands.
-- The band's left starts with the mark, a link to rails49.org, then the UI
-  name, then what the UI is about: the box or the loaded railroad. It may be
-  pressed to change which. What the UI is about is left out where it would
-  repeat the UI name or the mark
+- The band's left starts with the mark, then the UI name, then what the UI
+  is about: the box or the loaded railroad. It may be pressed to change
+  which. What the UI is about is left out where it would repeat the UI name
+  or the mark
   ([ADR-0020](https://github.com/rails49/.github/blob/main/docs/adr/0020-the-bands-right-ends-with-the-gear-and-help.md)).
   The UI name and what the UI is about are set in one bold type. A thin
   vertical rule separates them; it shows only where both are shown.
+- The mark links to the page one level up, in a new tab. Its tooltip names
+  the host it links to. look works out the address from the page's address
+  and the UI name:
+
+  | Page | Mark links to | Example |
+  |---|---|---|
+  | a UI over HTTP | the page's host name or address, port 80 | `http://pi49.local:8081/` → `http://pi49.local/` |
+  | a UI over HTTPS at `<UI name>.<rest>` | `https://<rest>/` | `https://control.gleis49.org/` → `https://gleis49.org/` |
+  | a UI over HTTPS at any other host | the root of the same host and port | `https://gleis49.org/box/` → `https://gleis49.org/` |
+  | no UI name: the installation page, the landing page | `https://rails49.org` | |
 - The band's right is, from left to right, the UI's items, the gear, then Help
   at the far right. The UI's items are what is true of the whole system the UI
   is about, pressable or not, in the order the UI chooses; track power and the

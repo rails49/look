@@ -2866,6 +2866,14 @@ var Rr = Object.defineProperty, Mr = Object.getOwnPropertyDescriptor, fo = (e, t
     (i = e[r]) && (l = (s ? i(t, o, l) : i(l)) || l);
   return s && l && Rr(t, o, l), l;
 };
+function Tr(e, t) {
+  if (!e) return { href: "https://rails49.org", host: "rails49.org" };
+  if (t.protocol === "https:") {
+    const o = `${e}.`, s = t.host.startsWith(o) ? t.host.slice(o.length) : t.host;
+    return { href: `https://${s}/`, host: s };
+  }
+  return { href: `http://${t.hostname}/`, host: t.hostname };
+}
 let Ge = class extends C {
   constructor() {
     super(...arguments), this.ui = "", this.help = "", this.resize = new ResizeObserver(() => this.fit());
@@ -2897,12 +2905,12 @@ let Ge = class extends C {
     t() || e.classList.add("cut");
   }
   render() {
-    const e = this.help || (this.ui ? `https://github.com/rails49/${this.ui}` : "https://github.com/rails49");
+    const e = Tr(this.ui, location), t = this.help || (this.ui ? `https://github.com/rails49/${this.ui}` : "https://github.com/rails49");
     return L`
       <nav @slotchange=${() => this.requestUpdate()}>
         <div class="lead">
-          <sl-tooltip content="rails49.org" placement="bottom" hoist>
-            <a class="mark" href="https://rails49.org" target="_blank" rel="noopener" aria-label="rails49.org">
+          <sl-tooltip content=${e.host} placement="bottom" hoist>
+            <a class="mark" href=${e.href} target="_blank" rel="noopener" aria-label=${e.host}>
               <span class="wide" aria-hidden="true">${Ro(ll)}</span>
               <span class="square" aria-hidden="true">${Ro(rl)}</span>
             </a>
@@ -2917,7 +2925,7 @@ let Ge = class extends C {
           <slot name="power"></slot>
           <slot name="gear"></slot>
           <sl-tooltip class="help" content="Help" placement="bottom" hoist>
-            <a href=${e} target="_blank" rel="noopener" aria-label="Help">
+            <a href=${t} target="_blank" rel="noopener" aria-label="Help">
               <sl-icon name="question-circle"></sl-icon>
             </a>
           </sl-tooltip>
@@ -3070,10 +3078,10 @@ function go(e, t, o) {
   e.dispatchEvent(new CustomEvent(t, { detail: o, bubbles: !0, composed: !0 }));
 }
 const St = (e, t) => go(e, "look-press", { shiftKey: t.shiftKey ?? !1 });
-var Tr = Object.defineProperty, Dr = Object.getOwnPropertyDescriptor, zt = (e, t, o, s) => {
-  for (var l = s > 1 ? void 0 : s ? Dr(t, o) : t, r = e.length - 1, i; r >= 0; r--)
+var Dr = Object.defineProperty, Hr = Object.getOwnPropertyDescriptor, zt = (e, t, o, s) => {
+  for (var l = s > 1 ? void 0 : s ? Hr(t, o) : t, r = e.length - 1, i; r >= 0; r--)
     (i = e[r]) && (l = (s ? i(t, o, l) : i(l)) || l);
-  return s && l && Tr(t, o, l), l;
+  return s && l && Dr(t, o, l), l;
 };
 let Pe = class extends C {
   constructor() {
@@ -3157,8 +3165,8 @@ zt([
 Pe = zt([
   R("look-about")
 ], Pe);
-var Hr = Object.getOwnPropertyDescriptor, Br = (e, t, o, s) => {
-  for (var l = s > 1 ? void 0 : s ? Hr(t, o) : t, r = e.length - 1, i; r >= 0; r--)
+var Br = Object.getOwnPropertyDescriptor, Nr = (e, t, o, s) => {
+  for (var l = s > 1 ? void 0 : s ? Br(t, o) : t, r = e.length - 1, i; r >= 0; r--)
     (i = e[r]) && (l = i(l) || l);
   return l;
 };
@@ -3181,11 +3189,11 @@ Yt.styles = [
       }
     `
 ];
-Yt = Br([
+Yt = Nr([
   R("look-reading")
 ], Yt);
-var Nr = Object.getOwnPropertyDescriptor, Vr = (e, t, o, s) => {
-  for (var l = s > 1 ? void 0 : s ? Nr(t, o) : t, r = e.length - 1, i; r >= 0; r--)
+var Vr = Object.getOwnPropertyDescriptor, Fr = (e, t, o, s) => {
+  for (var l = s > 1 ? void 0 : s ? Vr(t, o) : t, r = e.length - 1, i; r >= 0; r--)
     (i = e[r]) && (l = i(l) || l);
   return l;
 };
@@ -3213,13 +3221,13 @@ Gt.styles = [
       }
     `
 ];
-Gt = Vr([
+Gt = Fr([
   R("look-chip")
 ], Gt);
-var Fr = Object.defineProperty, Ur = Object.getOwnPropertyDescriptor, Es = (e, t, o, s) => {
-  for (var l = s > 1 ? void 0 : s ? Ur(t, o) : t, r = e.length - 1, i; r >= 0; r--)
+var Ur = Object.defineProperty, jr = Object.getOwnPropertyDescriptor, Es = (e, t, o, s) => {
+  for (var l = s > 1 ? void 0 : s ? jr(t, o) : t, r = e.length - 1, i; r >= 0; r--)
     (i = e[r]) && (l = (s ? i(t, o, l) : i(l)) || l);
-  return s && l && Fr(t, o, l), l;
+  return s && l && Ur(t, o, l), l;
 };
 let yt = class extends C {
   constructor() {
@@ -3272,20 +3280,20 @@ Es([
 yt = Es([
   R("look-dot")
 ], yt);
-const jr = () => {
+const Ir = () => {
   var e;
   return /Mac|iPhone|iPad/.test(((e = globalThis.navigator) == null ? void 0 : e.platform) ?? "");
-}, Ir = { Mod: "⌘", Shift: "⇧", Alt: "⌥", Ctrl: "⌃" };
-function Wr(e, t = jr()) {
+}, Wr = { Mod: "⌘", Shift: "⇧", Alt: "⌥", Ctrl: "⌃" };
+function qr(e, t = Ir()) {
   const o = e.endsWith("+") ? "+" : e.slice(e.lastIndexOf("+") + 1), s = [...e.slice(0, e.length - o.length).split("+").filter(Boolean), o];
-  if (t) return s.map((n) => Ir[n] ?? n).join("");
+  if (t) return s.map((n) => Wr[n] ?? n).join("");
   const l = ["Mod", "Ctrl", "Alt", "Shift"], r = s.filter((n) => l.includes(n)).sort((n, a) => l.indexOf(n) - l.indexOf(a)), i = s.filter((n) => !l.includes(n));
   return [...new Set(r.map((n) => n === "Mod" ? "Ctrl" : n)), ...i].join("+");
 }
-const qr = (e, t) => t ? `${e}  ${Wr(t)}` : e;
+const Zr = (e, t) => t ? `${e}  ${qr(t)}` : e;
 function Je(e) {
   const t = e.disabled ? e.reason : "";
-  return L`<sl-tooltip content=${t || qr(e.label, e.key ?? "")} placement=${e.placement} hoist>
+  return L`<sl-tooltip content=${t || Zr(e.label, e.key ?? "")} placement=${e.placement} hoist>
     <button
       class="${e.word ? "word" : "icon"} ${e.part ?? ""}"
       aria-label=${e.word ? w : e.label}
@@ -3353,10 +3361,10 @@ const Pt = A`
     background: none;
   }
 `;
-var Zr = Object.defineProperty, Kr = Object.getOwnPropertyDescriptor, lt = (e, t, o, s) => {
-  for (var l = s > 1 ? void 0 : s ? Kr(t, o) : t, r = e.length - 1, i; r >= 0; r--)
+var Kr = Object.defineProperty, Xr = Object.getOwnPropertyDescriptor, lt = (e, t, o, s) => {
+  for (var l = s > 1 ? void 0 : s ? Xr(t, o) : t, r = e.length - 1, i; r >= 0; r--)
     (i = e[r]) && (l = (s ? i(t, o, l) : i(l)) || l);
-  return s && l && Zr(t, o, l), l;
+  return s && l && Kr(t, o, l), l;
 };
 let ce = class extends C {
   constructor() {
@@ -3414,8 +3422,8 @@ lt([
 ce = lt([
   R("look-band-press")
 ], ce);
-var Xr = Object.getOwnPropertyDescriptor, Yr = (e, t, o, s) => {
-  for (var l = s > 1 ? void 0 : s ? Xr(t, o) : t, r = e.length - 1, i; r >= 0; r--)
+var Yr = Object.getOwnPropertyDescriptor, Gr = (e, t, o, s) => {
+  for (var l = s > 1 ? void 0 : s ? Yr(t, o) : t, r = e.length - 1, i; r >= 0; r--)
     (i = e[r]) && (l = i(l) || l);
   return l;
 };
@@ -3446,15 +3454,15 @@ wt.styles = [
       }
     `
 ];
-wt = Yr([
+wt = Gr([
   R("look-gear")
 ], wt);
-var Gr = Object.defineProperty, Jr = Object.getOwnPropertyDescriptor, Ot = (e, t, o, s) => {
-  for (var l = s > 1 ? void 0 : s ? Jr(t, o) : t, r = e.length - 1, i; r >= 0; r--)
+var Jr = Object.defineProperty, ei = Object.getOwnPropertyDescriptor, Ot = (e, t, o, s) => {
+  for (var l = s > 1 ? void 0 : s ? ei(t, o) : t, r = e.length - 1, i; r >= 0; r--)
     (i = e[r]) && (l = (s ? i(t, o, l) : i(l)) || l);
-  return s && l && Gr(t, o, l), l;
+  return s && l && Jr(t, o, l), l;
 };
-const ei = {
+const ti = {
   on: "Track power is on; turn it off",
   off: "Track power is off; turn it on",
   stopped: "Stopped; turn track power on",
@@ -3475,7 +3483,7 @@ let Oe = class extends C {
     return L`
       ${Je({
       icon: "power",
-      label: ei[this.state],
+      label: ti[this.state],
       disabled: !!e,
       reason: e,
       placement: "bottom",
@@ -3546,10 +3554,10 @@ Ot([
 Oe = Ot([
   R("look-power")
 ], Oe);
-var ti = Object.defineProperty, oi = Object.getOwnPropertyDescriptor, Qs = (e, t, o, s) => {
-  for (var l = s > 1 ? void 0 : s ? oi(t, o) : t, r = e.length - 1, i; r >= 0; r--)
+var oi = Object.defineProperty, si = Object.getOwnPropertyDescriptor, Qs = (e, t, o, s) => {
+  for (var l = s > 1 ? void 0 : s ? si(t, o) : t, r = e.length - 1, i; r >= 0; r--)
     (i = e[r]) && (l = (s ? i(t, o, l) : i(l)) || l);
-  return s && l && ti(t, o, l), l;
+  return s && l && oi(t, o, l), l;
 };
 let xt = class extends C {
   constructor() {
@@ -3631,10 +3639,10 @@ Qs([
 xt = Qs([
   R("look-rail")
 ], xt);
-var si = Object.defineProperty, li = Object.getOwnPropertyDescriptor, Ae = (e, t, o, s) => {
-  for (var l = s > 1 ? void 0 : s ? li(t, o) : t, r = e.length - 1, i; r >= 0; r--)
+var li = Object.defineProperty, ri = Object.getOwnPropertyDescriptor, Ae = (e, t, o, s) => {
+  for (var l = s > 1 ? void 0 : s ? ri(t, o) : t, r = e.length - 1, i; r >= 0; r--)
     (i = e[r]) && (l = (s ? i(t, o, l) : i(l)) || l);
-  return s && l && si(t, o, l), l;
+  return s && l && li(t, o, l), l;
 };
 let te = class extends C {
   constructor() {
@@ -3754,10 +3762,10 @@ Ae([
 te = Ae([
   R("look-view")
 ], te);
-var ri = Object.defineProperty, ii = Object.getOwnPropertyDescriptor, mo = (e, t, o, s) => {
-  for (var l = s > 1 ? void 0 : s ? ii(t, o) : t, r = e.length - 1, i; r >= 0; r--)
+var ii = Object.defineProperty, ni = Object.getOwnPropertyDescriptor, mo = (e, t, o, s) => {
+  for (var l = s > 1 ? void 0 : s ? ni(t, o) : t, r = e.length - 1, i; r >= 0; r--)
     (i = e[r]) && (l = (s ? i(t, o, l) : i(l)) || l);
-  return s && l && ri(t, o, l), l;
+  return s && l && ii(t, o, l), l;
 };
 let et = class extends C {
   constructor() {
@@ -3815,10 +3823,10 @@ mo([
 et = mo([
   R("look-group")
 ], et);
-var ni = Object.defineProperty, ai = Object.getOwnPropertyDescriptor, de = (e, t, o, s) => {
-  for (var l = s > 1 ? void 0 : s ? ai(t, o) : t, r = e.length - 1, i; r >= 0; r--)
+var ai = Object.defineProperty, ci = Object.getOwnPropertyDescriptor, de = (e, t, o, s) => {
+  for (var l = s > 1 ? void 0 : s ? ci(t, o) : t, r = e.length - 1, i; r >= 0; r--)
     (i = e[r]) && (l = (s ? i(t, o, l) : i(l)) || l);
-  return s && l && ni(t, o, l), l;
+  return s && l && ai(t, o, l), l;
 };
 let V = class extends C {
   constructor() {
@@ -3910,7 +3918,7 @@ V = de([
 function* vo(e = document.activeElement) {
   e != null && (yield e, "shadowRoot" in e && e.shadowRoot && e.shadowRoot.mode !== "closed" && (yield* Ys(vo(e.shadowRoot.activeElement))));
 }
-function ci() {
+function hi() {
   return [...vo()].pop();
 }
 var jo = /* @__PURE__ */ new WeakMap();
@@ -3918,17 +3926,17 @@ function Ss(e) {
   let t = jo.get(e);
   return t || (t = window.getComputedStyle(e, null), jo.set(e, t)), t;
 }
-function hi(e) {
+function di(e) {
   if (typeof e.checkVisibility == "function")
     return e.checkVisibility({ checkOpacity: !1, checkVisibilityCSS: !0 });
   const t = Ss(e);
   return t.visibility !== "hidden" && t.display !== "none";
 }
-function di(e) {
+function ui(e) {
   const t = Ss(e), { overflowY: o, overflowX: s } = t;
   return o === "scroll" || s === "scroll" ? !0 : o !== "auto" || s !== "auto" ? !1 : e.scrollHeight > e.clientHeight && o === "auto" || e.scrollWidth > e.clientWidth && s === "auto";
 }
-function ui(e) {
+function pi(e) {
   const t = e.tagName.toLowerCase(), o = Number(e.getAttribute("tabindex"));
   if (e.hasAttribute("tabindex") && (isNaN(o) || o <= -1) || e.hasAttribute("disabled") || e.closest("[inert]"))
     return !1;
@@ -3936,7 +3944,7 @@ function ui(e) {
     const r = e.getRootNode(), i = `input[type='radio'][name="${e.getAttribute("name")}"]`, n = r.querySelector(`${i}:checked`);
     return n ? n === e : r.querySelector(i) === e;
   }
-  return hi(e) ? (t === "audio" || t === "video") && e.hasAttribute("controls") || e.hasAttribute("tabindex") || e.hasAttribute("contenteditable") && e.getAttribute("contenteditable") !== "false" || [
+  return di(e) ? (t === "audio" || t === "video") && e.hasAttribute("controls") || e.hasAttribute("tabindex") || e.hasAttribute("contenteditable") && e.getAttribute("contenteditable") !== "false" || [
     "button",
     "input",
     "select",
@@ -3946,9 +3954,9 @@ function ui(e) {
     "video",
     "summary",
     "iframe"
-  ].includes(t) ? !0 : di(e) : !1;
+  ].includes(t) ? !0 : ui(e) : !1;
 }
-function pi(e, t) {
+function fi(e, t) {
   var o;
   return ((o = e.getRootNode({ composed: !0 })) == null ? void 0 : o.host) !== t;
 }
@@ -3958,7 +3966,7 @@ function Io(e) {
     if (l instanceof Element) {
       if (l.hasAttribute("inert") || l.closest("[inert]") || t.has(l))
         return;
-      t.set(l, !0), !o.includes(l) && ui(l) && o.push(l), l instanceof HTMLSlotElement && pi(l, e) && l.assignedElements({ flatten: !0 }).forEach((r) => {
+      t.set(l, !0), !o.includes(l) && pi(l) && o.push(l), l instanceof HTMLSlotElement && fi(l, e) && l.assignedElements({ flatten: !0 }).forEach((r) => {
         s(r);
       }), l.shadowRoot !== null && l.shadowRoot.mode === "open" && s(l.shadowRoot);
     }
@@ -3970,14 +3978,14 @@ function Io(e) {
     return (Number(r.getAttribute("tabindex")) || 0) - i;
   });
 }
-var Ue = [], fi = class {
+var Ue = [], gi = class {
   constructor(e) {
     this.tabDirection = "forward", this.handleFocusIn = () => {
       this.isActive() && this.checkFocus();
     }, this.handleKeyDown = (t) => {
       var o;
       if (t.key !== "Tab" || this.isExternalActivated || !this.isActive()) return;
-      const s = ci();
+      const s = hi();
       if (this.previousFocus = s, this.previousFocus && this.possiblyHasTabbableChildren(this.previousFocus))
         return;
       t.shiftKey ? this.tabDirection = "backward" : this.tabDirection = "forward";
@@ -4036,17 +4044,17 @@ var Ue = [], fi = class {
     return this.elementsWithTabbableControls.includes(e.tagName.toLowerCase()) || e.hasAttribute("controls");
   }
 }, Jt = /* @__PURE__ */ new Set();
-function gi() {
+function mi() {
   const e = document.documentElement.clientWidth;
   return Math.abs(window.innerWidth - e);
 }
-function mi() {
+function vi() {
   const e = Number(getComputedStyle(document.body).paddingRight.replace(/px/, ""));
   return isNaN(e) || !e ? 0 : e;
 }
 function Wo(e) {
   if (Jt.add(e), !document.documentElement.classList.contains("sl-scroll-lock")) {
-    const t = gi() + mi();
+    const t = mi() + vi();
     let o = getComputedStyle(document.documentElement).scrollbarGutter;
     (!o || o === "auto") && (o = "stable"), t < 2 && (o = ""), document.documentElement.style.setProperty("--sl-scroll-lock-gutter", o), document.documentElement.classList.add("sl-scroll-lock"), document.documentElement.style.setProperty("--sl-scroll-lock-size", `${t}px`);
   }
@@ -4054,7 +4062,7 @@ function Wo(e) {
 function qo(e) {
   Jt.delete(e), Jt.size === 0 && (document.documentElement.classList.remove("sl-scroll-lock"), document.documentElement.style.removeProperty("--sl-scroll-lock-size"));
 }
-var vi = A`
+var bi = A`
   :host {
     --width: 31rem;
     --header-spacing: var(--sl-spacing-large);
@@ -4171,11 +4179,11 @@ var vi = A`
       border: solid 1px var(--sl-color-neutral-0);
     }
   }
-`, bi = (e) => {
+`, yi = (e) => {
   var t;
   const { activeElement: o } = document;
   o && e.contains(o) && ((t = document.activeElement) == null || t.blur());
-}, yi = A`
+}, wi = A`
   :host {
     display: inline-block;
     color: var(--sl-color-neutral-600);
@@ -4228,19 +4236,19 @@ var vi = A`
  * Copyright 2020 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const zs = Symbol.for(""), wi = (e) => {
+const zs = Symbol.for(""), xi = (e) => {
   if ((e == null ? void 0 : e.r) === zs) return e == null ? void 0 : e._$litStatic$;
 }, Zo = (e, ...t) => ({ _$litStatic$: t.reduce((o, s, l) => o + ((r) => {
   if (r._$litStatic$ !== void 0) return r._$litStatic$;
   throw Error(`Value passed to 'literal' function must be a 'literal' result: ${r}. Use 'unsafeStatic' to pass non-literal values, but
             take care to ensure page security.`);
-})(s) + e[l + 1], e[0]), r: zs }), Ko = /* @__PURE__ */ new Map(), xi = (e) => (t, ...o) => {
+})(s) + e[l + 1], e[0]), r: zs }), Ko = /* @__PURE__ */ new Map(), $i = (e) => (t, ...o) => {
   const s = o.length;
   let l, r;
   const i = [], n = [];
   let a, c = 0, d = !1;
   for (; c < s; ) {
-    for (a = t[c]; c < s && (r = o[c], (l = wi(r)) !== void 0); ) a += l + t[++c], d = !0;
+    for (a = t[c]; c < s && (r = o[c], (l = xi(r)) !== void 0); ) a += l + t[++c], d = !0;
     c !== s && n.push(r), i.push(a), c++;
   }
   if (c === s && i.push(t[s]), d) {
@@ -4248,7 +4256,7 @@ const zs = Symbol.for(""), wi = (e) => {
     (t = Ko.get(h)) === void 0 && (i.raw = i, Ko.set(h, t = i)), o = n;
   }
   return e(t, ...o);
-}, $i = xi(L);
+}, _i = $i(L);
 /**
  * @license
  * Copyright 2018 Google LLC
@@ -4282,7 +4290,7 @@ var T = class extends oe {
   }
   render() {
     const e = !!this.href, t = e ? Zo`a` : Zo`button`;
-    return $i`
+    return _i`
       <${t}
         part="base"
         class=${Ye({
@@ -4315,7 +4323,7 @@ var T = class extends oe {
     `;
   }
 };
-T.styles = [st, yi];
+T.styles = [st, wi];
 T.dependencies = { "sl-icon": q };
 g([
   W(".icon-button")
@@ -4347,7 +4355,7 @@ g([
 g([
   u({ type: Boolean, reflect: !0 })
 ], T.prototype, "disabled", 2);
-var _i = class {
+var Li = class {
   constructor(e, ...t) {
     this.slotNames = [], this.handleSlotChange = (o) => {
       const s = o.target;
@@ -4382,7 +4390,7 @@ var _i = class {
   }
 }, Z = class extends oe {
   constructor() {
-    super(...arguments), this.hasSlotController = new _i(this, "footer"), this.localize = new ao(this), this.modal = new fi(this), this.open = !1, this.label = "", this.noHeader = !1, this.handleDocumentKeyDown = (e) => {
+    super(...arguments), this.hasSlotController = new Li(this, "footer"), this.localize = new ao(this), this.modal = new gi(this), this.open = !1, this.label = "", this.noHeader = !1, this.handleDocumentKeyDown = (e) => {
       e.key === "Escape" && this.modal.isActive() && this.open && (e.stopPropagation(), this.requestClose("keyboard"));
     };
   }
@@ -4424,7 +4432,7 @@ var _i = class {
         ve(this.overlay, o.keyframes, o.options)
       ]), this.emit("sl-after-show");
     } else {
-      bi(this), this.emit("sl-hide"), this.removeOpenListeners(), this.modal.deactivate(), await Promise.all([Qe(this.dialog), Qe(this.overlay)]);
+      yi(this), this.emit("sl-hide"), this.removeOpenListeners(), this.modal.deactivate(), await Promise.all([Qe(this.dialog), Qe(this.overlay)]);
       const e = me(this, "dialog.hide", { dir: this.localize.dir() }), t = me(this, "dialog.overlay.hide", { dir: this.localize.dir() });
       await Promise.all([
         ve(this.overlay, t.keyframes, t.options).then(() => {
@@ -4500,7 +4508,7 @@ var _i = class {
     `;
   }
 };
-Z.styles = [st, vi];
+Z.styles = [st, bi];
 Z.dependencies = {
   "sl-icon-button": T
 };
@@ -4552,7 +4560,7 @@ ke("dialog.overlay.hide", {
   options: { duration: 250 }
 });
 Z.define("sl-dialog");
-const Li = A`
+const ki = A`
   sl-button::part(base):hover {
     filter: brightness(1.06);
   }
@@ -4596,10 +4604,10 @@ const Li = A`
     border-top: 1px solid var(--sl-color-neutral-200);
   }
 `;
-var ki = Object.defineProperty, Ai = Object.getOwnPropertyDescriptor, rt = (e, t, o, s) => {
-  for (var l = s > 1 ? void 0 : s ? Ai(t, o) : t, r = e.length - 1, i; r >= 0; r--)
+var Ai = Object.defineProperty, Ci = Object.getOwnPropertyDescriptor, rt = (e, t, o, s) => {
+  for (var l = s > 1 ? void 0 : s ? Ci(t, o) : t, r = e.length - 1, i; r >= 0; r--)
     (i = e[r]) && (l = (s ? i(t, o, l) : i(l)) || l);
-  return s && l && ki(t, o, l), l;
+  return s && l && Ai(t, o, l), l;
 };
 let Le = class extends C {
   constructor() {
@@ -4624,7 +4632,7 @@ let Le = class extends C {
 };
 Le.styles = [
   M,
-  Li,
+  ki,
   A`
       sl-dialog {
         --width: 560px;
@@ -4687,5 +4695,5 @@ export {
   cs as NARROW_WIDTH_PX,
   Cl as TOKENS,
   Ql as TURN_HEIGHT_PX,
-  Li as lookTheme
+  ki as lookTheme
 };

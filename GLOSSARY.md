@@ -13,7 +13,7 @@ A press or a view that fires nothing. It stays reachable by keyboard and hover s
 _Avoid_: held, off, inactive
 
 **Mark**:
-The rails49 drawing at the band's far left: rails curving into the distance and `rails49`, or `49` where the window is narrow. It is a link to `rails49.org`, not a press. Where it goes: [`docs/LOOK.md`](docs/LOOK.md#convention).
+The rails49 drawing at the band's far left: rails curving into the distance and `rails49`, or `49` where the window is narrow. It is a link to the page one level up, not a press. Where it goes: [`docs/LOOK.md`](docs/LOOK.md#convention).
 _Avoid_: logo, brand, icon
 
 **UI name**:

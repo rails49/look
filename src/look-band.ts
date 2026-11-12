@@ -8,6 +8,17 @@ import { MARK_SQUARE, MARK_WIDE } from './icons.ts';
 import { place } from './place.ts';
 import { BAND_HEIGHT_PX, NARROW_WIDTH_PX } from './tokens.ts';
 
+/** Where the mark links, and the host it names, for UI name `ui` on `page`. */
+function markLink(ui: string, page: Location): { href: string; host: string } {
+  if (!ui) return { href: 'https://rails49.org', host: 'rails49.org' };
+  if (page.protocol === 'https:') {
+    const prefix = `${ui}.`;
+    const host = page.host.startsWith(prefix) ? page.host.slice(prefix.length) : page.host;
+    return { href: `https://${host}/`, host };
+  }
+  return { href: `http://${page.hostname}/`, host: page.hostname };
+}
+
 /**
  * The band: the mark, the UI name and what the UI is about on the left, with a
  * thin rule between the UI name and what the UI is about; the UI's items, the
@@ -201,12 +212,13 @@ export class LookBand extends LitElement {
   }
 
   override render() {
+    const up = markLink(this.ui, location);
     const help = this.help || (this.ui ? `https://github.com/rails49/${this.ui}` : 'https://github.com/rails49');
     return html`
       <nav @slotchange=${() => this.requestUpdate()}>
         <div class="lead">
-          <sl-tooltip content="rails49.org" placement="bottom" hoist>
-            <a class="mark" href="https://rails49.org" target="_blank" rel="noopener" aria-label="rails49.org">
+          <sl-tooltip content=${up.host} placement="bottom" hoist>
+            <a class="mark" href=${up.href} target="_blank" rel="noopener" aria-label=${up.host}>
               <span class="wide" aria-hidden="true">${unsafeHTML(MARK_WIDE)}</span>
               <span class="square" aria-hidden="true">${unsafeHTML(MARK_SQUARE)}</span>
             </a>
