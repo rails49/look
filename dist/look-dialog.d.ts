@@ -7,12 +7,16 @@ import '@shoelace-style/shoelace/dist/components/dialog/dialog.js';
  * Shoelace's `sl-*` events pass through; `sl-request-close` can be cancelled
  * as on `sl-dialog`.
  *
+ * `size` sets the width: `small` 420px, `medium` 560px, and `large` 560px
+ * growing with the window, 70% of its width, to 960px (#48). Shoelace keeps
+ * each inside a narrow window.
+ *
  * @slot - The body.
  * @slot footer - The buttons.
  */
 export declare class LookDialog extends LitElement {
     label: string;
-    size: 'small' | 'medium';
+    size: 'small' | 'medium' | 'large';
     open: boolean;
     private dialog;
     static styles: import("lit").CSSResult[];
