@@ -466,6 +466,12 @@ describe('look-dialog', () => {
     expect(inner(dialog, '.footer slot[name=footer]')).not.toBeNull();
   });
 
+  it('grows with the window when large (#48)', async () => {
+    const dialog = await mount('<look-dialog label="Settings" size="large"></look-dialog>', 'look-dialog');
+    const width = getComputedStyle(inner(dialog, 'sl-dialog')).getPropertyValue('--width').trim();
+    expect(width).toBe('clamp(560px, 70vw, 960px)');
+  });
+
   it('opens from the open attribute', async () => {
     const dialog = await mount('<look-dialog label="Settings" open></look-dialog>', 'look-dialog');
     expect((inner(dialog, 'sl-dialog') as unknown as { open: boolean }).open).toBe(true);

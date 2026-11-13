@@ -12,13 +12,17 @@ import { lookTheme } from './theme.ts';
  * Shoelace's `sl-*` events pass through; `sl-request-close` can be cancelled
  * as on `sl-dialog`.
  *
+ * `size` sets the width: `small` 420px, `medium` 560px, and `large` 560px
+ * growing with the window, 70% of its width, to 960px (#48). Shoelace keeps
+ * each inside a narrow window.
+ *
  * @slot - The body.
  * @slot footer - The buttons.
  */
 @customElement('look-dialog')
 export class LookDialog extends LitElement {
   @property() label = '';
-  @property({ reflect: true }) size: 'small' | 'medium' = 'medium';
+  @property({ reflect: true }) size: 'small' | 'medium' | 'large' = 'medium';
   @property({ type: Boolean, reflect: true }) open = false;
 
   @query('sl-dialog') private dialog!: SlDialog;
@@ -33,6 +37,10 @@ export class LookDialog extends LitElement {
 
       :host([size='small']) sl-dialog {
         --width: 420px;
+      }
+
+      :host([size='large']) sl-dialog {
+        --width: clamp(560px, 70vw, 960px);
       }
 
       .footer {
