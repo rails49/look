@@ -1,6 +1,8 @@
 // The single-file build, for a page that loads no Lit or Shoelace of its own.
-// It carries Lit, the Shoelace components the chrome uses, look.css, and the
-// Bootstrap glyphs the chrome draws, so it fetches nothing else.
+// It carries Lit, the Shoelace components the chrome uses, Shoelace's switch
+// for a page's settings (#50), look.css, and the Bootstrap glyphs the chrome
+// draws, so it fetches nothing else.
+import '@shoelace-style/shoelace/dist/components/switch/switch.js';
 import { registerIconLibrary } from '@shoelace-style/shoelace/dist/utilities/icon-library.js';
 import chevronDown from '../node_modules/@shoelace-style/shoelace/dist/assets/icons/chevron-down.svg?raw';
 import gear from '../node_modules/@shoelace-style/shoelace/dist/assets/icons/gear.svg?raw';

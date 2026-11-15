@@ -74,7 +74,7 @@ shadow root, so it keeps passing when look changes what it draws.
 ```
 
 `dist/look.bundle.js` holds Lit, the Shoelace components the chrome uses,
-`look.css` and the chrome's glyphs. A page that loads it loads no other copy of
+`sl-switch` for a page's settings, `look.css` and the chrome's glyphs. A page that loads it loads no other copy of
 the elements.
 
 The link is there for the first paint. A module script runs only after the page
