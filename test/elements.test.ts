@@ -286,9 +286,10 @@ describe('where the band does not fit', () => {
 });
 
 describe('a narrow band', () => {
-  const cutShort = (el: Element) => {
-    const style = getComputedStyle(el);
-    return [style.minWidth, style.overflow, style.textOverflow, style.whiteSpace];
+  // The band shrinks `el`; its text is cut in `text`.
+  const cutShort = (el: Element, text = el) => {
+    const style = getComputedStyle(text);
+    return [getComputedStyle(el).minWidth, style.overflow, style.textOverflow, style.whiteSpace];
   };
   const shrink = (el: Element) => getComputedStyle(el).flexShrink;
 
@@ -302,9 +303,18 @@ describe('a narrow band', () => {
       'look-band',
     );
     const short = ['0', 'hidden', 'ellipsis', 'nowrap'];
-    expect(cutShort(band.querySelector('look-reading')!)).toEqual(short);
-    expect(cutShort(band.querySelector('look-chip')!)).toEqual(short);
-    expect(cutShort(inner(band.querySelector('look-dot')!, '.text'))).toEqual(short);
+    const reading = band.querySelector('look-reading')!;
+    const chip = band.querySelector('look-chip')!;
+    const dot = band.querySelector('look-dot')!;
+    const button = (el: Element) => getComputedStyle(inner(el, 'button'));
+    expect(cutShort(reading, inner(reading, 'button'))).toEqual(short);
+    // A chip shrinks to its padding.
+    const [minWidth, ...cut] = cutShort(chip, inner(chip, 'button'));
+    expect(parseFloat(minWidth!)).toBe(parseFloat(button(chip).paddingLeft) + parseFloat(button(chip).paddingRight));
+    expect(cut).toEqual(short.slice(1));
+    expect(cutShort(inner(dot, '.text'))).toEqual(short);
+    // A button is no wider than its element.
+    expect([reading, chip, dot].map((el) => button(el).maxWidth)).toEqual(['100%', '100%', '100%']);
   });
 
   it('keeps the dot whole', async () => {
@@ -328,6 +338,66 @@ describe('a narrow band', () => {
     const band = await mount('<look-band ui="dccex"></look-band>', 'look-band');
     const parents = ['.lead', 'slot:not([name])', '.tail'].map((s) => inner(band, s).parentElement);
     expect(parents).toEqual([inner(band, 'nav'), inner(band, 'nav'), inner(band, 'nav')]);
+  });
+});
+
+describe('status text', () => {
+  /** A tap as the tooltip sees it: the button takes focus and is clicked. */
+  const tap = async (el: Element) => {
+    const button = inner(el, 'button');
+    button.focus();
+    button.click();
+    const tooltip = button.closest('sl-tooltip')!;
+    await tooltip.updateComplete;
+    return tooltip;
+  };
+
+  it.each([
+    ['look-chip', '<look-chip>station not reachable</look-chip>', 'station not reachable'],
+    ['look-reading', '<look-reading>no railroad loaded</look-reading>', 'no railroad loaded'],
+    ['look-dot', '<look-dot state="up">v5.6.4-rails49.9</look-dot>', 'v5.6.4-rails49.9'],
+  ])('%s shows its whole text on a tap', async (name, markup, text) => {
+    const tooltip = await tap(await mount(markup, name));
+    expect([tooltip.open, tooltip.content]).toEqual([true, text]);
+  });
+
+  const WHY = "free-standing pin 'n13.P' joins two wires, got 1";
+
+  it.each([
+    ['look-chip', `<look-chip label="${WHY}">invalid drawing</look-chip>`],
+    ['look-reading', `<look-reading label="${WHY}">invalid drawing</look-reading>`],
+    ['look-dot', `<look-dot label="${WHY}">invalid drawing</look-dot>`],
+  ])('%s shows its label in place of its text', async (name, markup) => {
+    const tooltip = await tap(await mount(markup, name));
+    expect([tooltip.open, tooltip.content]).toEqual([true, WHY]);
+  });
+
+  it.each([
+    ['look-chip', '<look-chip></look-chip>'],
+    ['look-reading', '<look-reading> </look-reading>'],
+    ['look-dot', '<look-dot state="up"></look-dot>'],
+  ])('%s shows no tooltip with no text and no label', async (name, markup) => {
+    const tooltip = await tap(await mount(markup, name));
+    expect([tooltip.content, tooltip.disabled]).toEqual(['', true]);
+  });
+
+  it('shows the text as it is now', async () => {
+    const reading = await mount<LitElement>('<look-reading>3 trains</look-reading>', 'look-reading');
+    reading.firstChild!.textContent = '4 trains';
+    await new Promise((r) => setTimeout(r));
+    await reading.updateComplete;
+    expect((await tap(reading)).content).toBe('4 trains');
+  });
+
+  it('fires nothing on a tap', async () => {
+    const band = await mount(
+      '<look-band><look-chip>fault</look-chip><look-reading>3 trains</look-reading><look-dot>broker</look-dot></look-band>',
+      'look-band',
+    );
+    const seen = vi.fn();
+    for (const type of ['look-press', 'look-view', 'look-power']) band.addEventListener(type, seen);
+    for (const el of band.children) await tap(el);
+    expect(seen).not.toHaveBeenCalled();
   });
 });
 

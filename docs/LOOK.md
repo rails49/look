@@ -84,6 +84,9 @@ Typeface and type scale are Shoelace's theme's.
   the band drops the UI name with the rule, then Help, then the gear, only as
   far as it must. What the UI is about is cut short last. The mark, the UI's
   presses and track power keep their size.
+- A tap, a hover or keyboard focus shows a reading's, a chip's or a dot's
+  whole text in a tooltip, or its `label` where there is more to say: a chip
+  *invalid drawing* with the store's refusal as its `label`.
 - A press with two states shows each by its glyph and tooltip, not by a
   colour.
 - Switching views is the rail's first group.

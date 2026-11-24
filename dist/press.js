@@ -23,8 +23,9 @@ export function press(p) {
   </sl-tooltip>`;
 }
 /**
- * Put after `chromeTokens` in an element that draws presses. Every rule is in
- * `:where()`, so the element's own rules win: its sizes, layout and colours.
+ * Put after `chromeTokens` in an element that draws presses or status text.
+ * Every rule is in `:where()`, so the element's own rules win: its sizes,
+ * layout and colours.
  */
 export const pressStyles = css `
   :where(button) {
