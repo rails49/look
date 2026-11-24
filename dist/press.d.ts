@@ -24,7 +24,8 @@ export interface Press {
 /** A press in the chrome: a button inside its tooltip. */
 export declare function press(p: Press): import("lit").TemplateResult<1>;
 /**
- * Put after `chromeTokens` in an element that draws presses. Every rule is in
- * `:where()`, so the element's own rules win: its sizes, layout and colours.
+ * Put after `chromeTokens` in an element that draws presses or status text.
+ * Every rule is in `:where()`, so the element's own rules win: its sizes,
+ * layout and colours.
  */
 export declare const pressStyles: import("lit").CSSResult;

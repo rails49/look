@@ -1,28 +1,33 @@
-import { LitElement, css, html } from 'lit';
+import { css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { chromeTokens } from './chrome.ts';
+import { StatusText } from './status-text.ts';
 
 /**
  * A connection on the band: a dot, green when up and red when down, then its
  * name. Where the band is narrow the name is cut short with "…" and the dot
- * stays; give it a `title` to show the whole name.
+ * stays. A tap, a hover or keyboard focus shows the whole name, or `label`
+ * where there is more to say.
  *
  * @slot - What is connected.
  */
 @customElement('look-dot')
-export class LookDot extends LitElement {
+export class LookDot extends StatusText {
   @property({ reflect: true }) state: 'up' | 'down' = 'down';
 
   static override styles = [
-    chromeTokens,
+    StatusText.baseStyles,
     css`
       :host {
         display: inline-flex;
+        min-width: 0.8rem;
+        font-size: 0.85rem;
+      }
+
+      button {
+        display: flex;
         align-items: center;
         gap: 0.4rem;
-        min-width: 0.8rem;
-        white-space: nowrap;
-        font-size: 0.85rem;
+        min-width: 0;
       }
 
       .dot {
@@ -52,7 +57,9 @@ export class LookDot extends LitElement {
   ];
 
   override render() {
-    return html`<span class="dot" role="img" aria-label=${this.state}></span><span class="text"><slot></slot></span>`;
+    return this.inTooltip(
+      html`<span class="dot" role="img" aria-label=${this.state}></span><span class="text"><slot></slot></span>`,
+    );
   }
 }
 
