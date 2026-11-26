@@ -21,4 +21,4 @@ What each kind of doc holds, and that an accepted ADR does not change: org [ADR-
 The gate runs what CI runs, including the check that the committed `dist/`
 matches a fresh build:
 
-gate: pnpm install --frozen-lockfile && pnpm check && pnpm test && pnpm build && test -z "$(git status --porcelain dist)"
+gate: pnpm install --frozen-lockfile && pnpm check && pnpm exec playwright install chromium && pnpm test && pnpm build && test -z "$(git status --porcelain dist)"

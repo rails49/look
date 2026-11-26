@@ -99,6 +99,7 @@ a `--sl-*` property, and on `sl-*::part()` in app code.
 
 ```sh
 pnpm install
+pnpm exec playwright install chromium   # once: test/*.browser.test.ts runs in Chromium
 pnpm check && pnpm test && pnpm build   # commit dist/ with the source
 pnpm dev                                # index.html, the chrome in a browser
 ```
