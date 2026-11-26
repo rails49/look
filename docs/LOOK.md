@@ -38,6 +38,7 @@ Red on the chrome means stop or a fault and nothing else.
 |---|---|
 | `--rail-button` | every button on the rail; the minimum a thumb needs |
 | `TURN_HEIGHT_PX` | window height at or below which the rail becomes a horizontal strip |
+| `GAP_PX` | a `look-gap`'s thickness: its width on axis `x`, its height on axis `y` |
 | `NARROW_WIDTH_PX` | window width at or below which the band draws the square mark and the rail becomes a horizontal strip ([ADR-0002](adr/0002-narrow-window-rail-becomes-a-strip.md)) |
 
 ## Theme

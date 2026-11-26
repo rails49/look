@@ -13,6 +13,11 @@ export type PowerShown = PowerState | 'draining';
 export interface LookPowerDetail {
     readonly state: PowerState;
 }
+/** What `look-gap-move` carries: the pointer's client point. */
+export interface LookGapMoveDetail {
+    readonly x: number;
+    readonly y: number;
+}
 export declare function fire<T>(el: HTMLElement, type: string, detail: T): void;
 /** A press, with the Shift key a click or key press carried. */
 export declare const firePress: (el: HTMLElement, e: Event) => void;
@@ -20,6 +25,7 @@ interface LookEventMap {
     'look-press': CustomEvent<LookPressDetail>;
     'look-view': CustomEvent<LookViewDetail>;
     'look-power': CustomEvent<LookPowerDetail>;
+    'look-gap-move': CustomEvent<LookGapMoveDetail>;
 }
 declare global {
     interface HTMLElementEventMap extends LookEventMap {

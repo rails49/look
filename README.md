@@ -51,6 +51,10 @@ elements, their attributes and events are in
 `<look-text-dialog>` shows a long text in a large `look-dialog`; its
 properties are in [`src/look-text-dialog.ts`](src/look-text-dialog.ts).
 
+`<look-gap>` is a gap a person drags between two parts of a work pane; it
+fires `look-gap-move` with the pointer's point and the caller sizes the
+parts. Its properties are in [`src/look-gap.ts`](src/look-gap.ts).
+
 ## A test that presses
 
 ```ts

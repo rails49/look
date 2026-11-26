@@ -6,7 +6,7 @@ import '@shoelace-style/shoelace/dist/components/button/button.js';
 import '@shoelace-style/shoelace/dist/components/input/input.js';
 import '@shoelace-style/shoelace/dist/components/switch/switch.js';
 import { setBasePath } from '@shoelace-style/shoelace/dist/utilities/base-path.js';
-import { LookBandPress, lookTheme, type LookDialog, type LookTextDialog } from '../src/index.ts';
+import { LookBandPress, lookTheme, type LookDialog, type LookGapMoveDetail, type LookTextDialog } from '../src/index.ts';
 
 setBasePath('/node_modules/@shoelace-style/shoelace/dist');
 
@@ -25,6 +25,7 @@ const STORED = JSON.stringify(
 export class DemoPane extends LitElement {
   @query('look-dialog') dialog!: LookDialog;
   @query('look-text-dialog') textDialog!: LookTextDialog;
+  @query('.panes') panes!: HTMLElement;
 
   static override styles = [
     lookTheme,
@@ -38,6 +39,27 @@ export class DemoPane extends LitElement {
         display: flex;
         gap: 0.5rem;
         align-items: end;
+      }
+
+      .panes {
+        display: flex;
+        height: 8rem;
+        border: 1px solid var(--sl-color-neutral-300);
+      }
+
+      .panes > div {
+        box-sizing: border-box;
+        padding: 0.5rem;
+        overflow: hidden;
+        background: var(--sl-color-neutral-50);
+      }
+
+      .panes > div:first-child {
+        width: var(--left, 240px);
+      }
+
+      .panes > div:last-child {
+        flex: 1;
       }
     `,
   ];
@@ -54,6 +76,11 @@ export class DemoPane extends LitElement {
         <sl-switch size="small" @sl-change=${this.silence}>Station silent: the toggle is disabled, STOP stays live</sl-switch>
       </p>
       <p><sl-button size="small" @click=${() => this.textDialog.show()}>Show a stored file</sl-button></p>
+      <div class="panes">
+        <div>Left pane; drag the gap</div>
+        <look-gap axis="x" @look-gap-move=${this.resize}></look-gap>
+        <div>Right pane</div>
+      </div>
       <p><a href="/demo/bands.html">control's band and the dcc-ex UI's at 360px, 390px and 600px</a></p>
       <look-dialog label="Settings" size="medium">
         <p>The dialog shell.</p>
@@ -61,6 +88,12 @@ export class DemoPane extends LitElement {
       </look-dialog>
       <look-text-dialog label="otira.json" .text=${STORED}></look-text-dialog>
     `;
+  }
+
+  private resize(e: CustomEvent<LookGapMoveDetail>) {
+    const box = this.panes.getBoundingClientRect();
+    const left = Math.min(Math.max(e.detail.x - box.left, 80), box.width - 80);
+    this.panes.style.setProperty('--left', `${left}px`);
   }
 
   private silence(e: Event) {
