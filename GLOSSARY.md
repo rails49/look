@@ -27,3 +27,7 @@ _Avoid_: docs button, GitHub link
 **Reason**:
 The text that says why a press or a view is disabled. It takes the label's place in a press's tooltip, and is a view's only tooltip ([ADR-0001](docs/adr/0001-native-button-for-presses.md)).
 _Avoid_: why, hint
+
+**Divider**:
+The strip between two parts of a work pane that a person drags to resize them. The element that draws it is `look-gap`.
+_Avoid_: gap, splitter, handle
