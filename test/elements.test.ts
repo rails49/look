@@ -563,6 +563,40 @@ describe('look-dialog', () => {
   });
 });
 
+describe('look-text-dialog (#60)', () => {
+  const TEXT = 'first line\n  indented  twice\n\nlast';
+
+  it('shows the text in the block as given, whitespace kept', async () => {
+    const dialog = await mount('<look-text-dialog label="stored.json" open></look-text-dialog>', 'look-text-dialog');
+    (dialog as unknown as { text: string }).text = TEXT;
+    await (dialog as unknown as LitElement).updateComplete;
+    expect(inner(dialog, 'pre').textContent).toBe(TEXT);
+  });
+
+  it('shows the error in place of the text', async () => {
+    const dialog = await mount('<look-text-dialog label="stored.json" open></look-text-dialog>', 'look-text-dialog');
+    Object.assign(dialog, { text: TEXT, error: 'the store said 404' });
+    await (dialog as unknown as LitElement).updateComplete;
+    expect(dialog.shadowRoot!.textContent).toContain('the store said 404');
+    expect(dialog.shadowRoot!.textContent).not.toContain('indented');
+  });
+
+  it('hides on Close', async () => {
+    const dialog = await mount('<look-text-dialog label="stored.json"></look-text-dialog>', 'look-text-dialog');
+    const d = dialog as unknown as LitElement & { open: boolean };
+    const shown = new Promise((r) => dialog.addEventListener('sl-after-show', r, { once: true }));
+    d.open = true;
+    await shown;
+
+    const hidden = new Promise((r) => dialog.addEventListener('sl-after-hide', r, { once: true }));
+    (dialog.shadowRoot!.querySelector('sl-button') as HTMLElement).click();
+    await hidden;
+    await d.updateComplete;
+    expect(d.open).toBe(false);
+    expect(dialog.hasAttribute('open')).toBe(false);
+  });
+});
+
 describe('icons', () => {
   it('draws rails49 glyphs from the rails49 library and the rest from Bootstrap', () => {
     expect(libraryOf('throttle')).toBe('rails49');

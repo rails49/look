@@ -57,3 +57,25 @@ describe('a dialog opened from a band item', () => {
     expect(contrast(text, panel), `text ${text} on ${panel}`).toBeGreaterThanOrEqual(4.5);
   });
 });
+
+describe('look-text-dialog (#60)', () => {
+  it('shows the text in a monospace block that scrolls inside the window and can be selected', async () => {
+    document.body.innerHTML = '<look-text-dialog label="stored.json" open></look-text-dialog>';
+    const dialog = document.querySelector('look-text-dialog')!;
+    dialog.text = Array.from({ length: 400 }, (_, i) => `line ${i}`).join('\n');
+    await dialog.updateComplete;
+    const lookDialog = dialog.shadowRoot!.querySelector('look-dialog')!;
+    await lookDialog.updateComplete;
+    const slDialog = lookDialog.shadowRoot!.querySelector('sl-dialog')!;
+    await slDialog.updateComplete;
+
+    const block = dialog.shadowRoot!.querySelector('pre')!;
+    const style = getComputedStyle(block);
+    expect(style.fontFamily).toMatch(/monospace/);
+    expect(style.userSelect).not.toBe('none');
+    expect(block.scrollHeight).toBeGreaterThan(block.clientHeight);
+    const panel = part(slDialog.shadowRoot!, 'panel').getBoundingClientRect();
+    expect(panel.top).toBeGreaterThanOrEqual(0);
+    expect(panel.bottom).toBeLessThanOrEqual(innerHeight);
+  });
+});
