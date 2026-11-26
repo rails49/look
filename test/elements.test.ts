@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { NARROW_WIDTH_PX, type LookTextDialog } from '../src/index.ts';
+import { NARROW_WIDTH_PX, type LookGap, type LookGapMoveDetail, type LookTextDialog } from '../src/index.ts';
 import type { Window } from 'happy-dom';
 import type { LitElement } from 'lit';
 import { libraryOf } from '../src/icons.ts';
@@ -593,6 +593,68 @@ describe('look-text-dialog (#60)', () => {
     await dialog.updateComplete;
     expect(dialog.open).toBe(false);
     expect(dialog.hasAttribute('open')).toBe(false);
+  });
+});
+
+describe('look-gap (#62)', () => {
+  async function gap(axis: 'x' | 'y' = 'x') {
+    const el = await mount<LookGap>(`<look-gap axis="${axis}"></look-gap>`, 'look-gap');
+    const moved: LookGapMoveDetail[] = [];
+    el.addEventListener('look-gap-move', (e) => moved.push(e.detail));
+    return { el, moved };
+  }
+
+  const pointer = (el: Element, type: string, x: number, y: number, button = 0) =>
+    el.dispatchEvent(new PointerEvent(type, { button, bubbles: true, clientX: x, clientY: y }));
+
+  it("fires look-gap-move with the pointer's client point while dragged", async () => {
+    const { el, moved } = await gap();
+    pointer(el, 'pointerdown', 10, 20);
+    pointer(el, 'pointermove', 30, 40);
+    pointer(el, 'pointermove', 50, 60);
+    expect(moved).toEqual([
+      { x: 30, y: 40 },
+      { x: 50, y: 60 },
+    ]);
+  });
+
+  it('fires nothing for a move before a press', async () => {
+    const { el, moved } = await gap();
+    pointer(el, 'pointermove', 30, 40);
+    expect(moved).toEqual([]);
+  });
+
+  it('is not dragged by a right-button press', async () => {
+    const { el, moved } = await gap();
+    pointer(el, 'pointerdown', 10, 20, 2);
+    pointer(el, 'pointermove', 30, 40);
+    expect(moved).toEqual([]);
+  });
+
+  it.each(['pointerup', 'pointercancel'])('ends the drag on %s', async (type) => {
+    const { el, moved } = await gap();
+    pointer(el, 'pointerdown', 10, 20);
+    pointer(el, type, 10, 20);
+    pointer(el, 'pointermove', 30, 40);
+    expect(moved).toEqual([]);
+  });
+
+  it('ends the drag when its axis changes', async () => {
+    const { el, moved } = await gap('x');
+    pointer(el, 'pointerdown', 10, 20);
+    el.axis = 'y';
+    await el.updateComplete;
+    pointer(el, 'pointermove', 30, 40);
+    expect(moved).toEqual([]);
+  });
+
+  it('sets dragging while dragged and clears it on release', async () => {
+    const { el } = await gap();
+    expect(el.hasAttribute('dragging')).toBe(false);
+    pointer(el, 'pointerdown', 10, 20);
+    expect(el.hasAttribute('dragging')).toBe(true);
+    pointer(el, 'pointerup', 10, 20);
+    expect(el.hasAttribute('dragging')).toBe(false);
   });
 });
 

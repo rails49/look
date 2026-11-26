@@ -14,5 +14,6 @@ export { LookGroup } from "./look-group.js";
 export { LookCommand } from "./look-command.js";
 export { LookDialog } from "./look-dialog.js";
 export { LookTextDialog } from "./look-text-dialog.js";
+export { LookGap } from "./look-gap.js";
 export { lookTheme } from "./theme.js";
-export { NARROW_WIDTH_PX, TOKENS, TURN_HEIGHT_PX } from "./tokens.js";
+export { GAP_PX, NARROW_WIDTH_PX, TOKENS, TURN_HEIGHT_PX } from "./tokens.js";

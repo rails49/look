@@ -18,6 +18,12 @@ export interface LookPowerDetail {
   readonly state: PowerState;
 }
 
+/** What `look-gap-move` carries: the pointer's client point. */
+export interface LookGapMoveDetail {
+  readonly x: number;
+  readonly y: number;
+}
+
 export function fire<T>(el: HTMLElement, type: string, detail: T) {
   el.dispatchEvent(new CustomEvent<T>(type, { detail, bubbles: true, composed: true }));
 }
@@ -30,6 +36,7 @@ interface LookEventMap {
   'look-press': CustomEvent<LookPressDetail>;
   'look-view': CustomEvent<LookViewDetail>;
   'look-power': CustomEvent<LookPowerDetail>;
+  'look-gap-move': CustomEvent<LookGapMoveDetail>;
 }
 
 declare global {

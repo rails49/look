@@ -15,6 +15,8 @@ export const TOKENS = {
 export const BAND_HEIGHT_PX = 60;
 /** Window height at or below which the shell and rail turn into a strip. */
 export const TURN_HEIGHT_PX = 640;
+/** A `look-gap`'s thickness: its width on axis `x`, its height on axis `y`. */
+export const GAP_PX = 6;
 /** Window width at or below which the band draws the square mark and the rail turns into a strip. */
 export const NARROW_WIDTH_PX = 600;
 /**
