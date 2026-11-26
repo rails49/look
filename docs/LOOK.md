@@ -66,9 +66,9 @@ Typeface and type scale are Shoelace's theme's.
 
   | Page | Mark links to | Example |
   |---|---|---|
-  | a UI over HTTP | the page's host name or address, port 80 | `http://pi49.local:8081/` → `http://pi49.local/` |
-  | a UI over HTTPS at `<UI name>.<rest>` | `https://<rest>/` | `https://control.gleis49.org/` → `https://gleis49.org/` |
-  | a UI over HTTPS at any other host | the root of the same host and port | `https://gleis49.org/box/` → `https://gleis49.org/` |
+  | a UI over HTTP | the page's host name or address, port 80 | `http://box.local:8081/` → `http://box.local/` |
+  | a UI over HTTPS at `<UI name>.<rest>` | `https://<rest>/` | `https://control.example.org/` → `https://example.org/` |
+  | a UI over HTTPS at any other host | the root of the same host and port | `https://example.org/box/` → `https://example.org/` |
   | no UI name: the installation page, the landing page | `https://rails49.org` | |
 - The band's right is, from left to right, the UI's items, the gear, then Help
   at the far right. The UI's items are what is true of the whole system the UI
