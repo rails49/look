@@ -36,8 +36,10 @@
   "devDependencies": {
     "@shoelace-style/shoelace": "^2.20.1",
     "@types/node": "^24.0.0",
+    "@vitest/browser": "^3.2.0",
     "happy-dom": "^20.14.5",
     "lit": "^3.3.2",
+    "playwright": "^1.65.1",
     "typescript": "^5.9.3",
     "vite": "^6.4.2",
     "vitest": "^3.2.0"
