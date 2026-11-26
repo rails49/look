@@ -14,6 +14,7 @@ export { LookView } from './look-view.ts';
 export { LookGroup } from './look-group.ts';
 export { LookCommand } from './look-command.ts';
 export { LookDialog } from './look-dialog.ts';
+export { LookTextDialog } from './look-text-dialog.ts';
 export { lookTheme } from './theme.ts';
 export { NARROW_WIDTH_PX, TOKENS, TURN_HEIGHT_PX } from './tokens.ts';
 export type { LookPressDetail, LookPowerDetail, LookViewDetail, PowerShown, PowerState } from './events.ts';

@@ -48,6 +48,9 @@ Each work-pane component puts `lookTheme` first in its `static styles`. The
 elements, their attributes and events are in
 [The package's elements, slots, properties and events](https://github.com/rails49/look/issues/7#issuecomment-6153278540).
 
+`<look-text-dialog>` shows a long text in a large `look-dialog`; its
+properties are in [`src/look-text-dialog.ts`](src/look-text-dialog.ts).
+
 ## A test that presses
 
 ```ts
