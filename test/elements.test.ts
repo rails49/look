@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { NARROW_WIDTH_PX } from '../src/index.ts';
+import { NARROW_WIDTH_PX, type LookTextDialog } from '../src/index.ts';
 import type { Window } from 'happy-dom';
 import type { LitElement } from 'lit';
 import { libraryOf } from '../src/icons.ts';
@@ -567,32 +567,31 @@ describe('look-text-dialog (#60)', () => {
   const TEXT = 'first line\n  indented  twice\n\nlast';
 
   it('shows the text in the block as given, whitespace kept', async () => {
-    const dialog = await mount('<look-text-dialog label="stored.json" open></look-text-dialog>', 'look-text-dialog');
-    (dialog as unknown as { text: string }).text = TEXT;
-    await (dialog as unknown as LitElement).updateComplete;
+    const dialog = await mount<LookTextDialog>('<look-text-dialog label="stored.json" open></look-text-dialog>', 'look-text-dialog');
+    dialog.text = TEXT;
+    await dialog.updateComplete;
     expect(inner(dialog, 'pre').textContent).toBe(TEXT);
   });
 
   it('shows the error in place of the text', async () => {
-    const dialog = await mount('<look-text-dialog label="stored.json" open></look-text-dialog>', 'look-text-dialog');
+    const dialog = await mount<LookTextDialog>('<look-text-dialog label="stored.json" open></look-text-dialog>', 'look-text-dialog');
     Object.assign(dialog, { text: TEXT, error: 'the store said 404' });
-    await (dialog as unknown as LitElement).updateComplete;
+    await dialog.updateComplete;
     expect(dialog.shadowRoot!.textContent).toContain('the store said 404');
     expect(dialog.shadowRoot!.textContent).not.toContain('indented');
   });
 
   it('hides on Close', async () => {
-    const dialog = await mount('<look-text-dialog label="stored.json"></look-text-dialog>', 'look-text-dialog');
-    const d = dialog as unknown as LitElement & { open: boolean };
+    const dialog = await mount<LookTextDialog>('<look-text-dialog label="stored.json"></look-text-dialog>', 'look-text-dialog');
     const shown = new Promise((r) => dialog.addEventListener('sl-after-show', r, { once: true }));
-    d.open = true;
+    dialog.open = true;
     await shown;
 
     const hidden = new Promise((r) => dialog.addEventListener('sl-after-hide', r, { once: true }));
     (dialog.shadowRoot!.querySelector('sl-button') as HTMLElement).click();
     await hidden;
-    await d.updateComplete;
-    expect(d.open).toBe(false);
+    await dialog.updateComplete;
+    expect(dialog.open).toBe(false);
     expect(dialog.hasAttribute('open')).toBe(false);
   });
 });

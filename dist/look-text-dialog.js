@@ -40,7 +40,6 @@ let LookTextDialog = class LookTextDialog extends LitElement {
         font-family: var(--sl-font-mono);
         font-size: var(--sl-font-size-small);
         white-space: pre;
-        user-select: text;
       }
 
       .error {
