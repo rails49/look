@@ -26,3 +26,4 @@ export type {
   PowerShown,
   PowerState,
 } from './events.ts';
+export { dividerSizeAt, keepDivider, keptDivider, type Edge } from './divider.ts';

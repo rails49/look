@@ -6,7 +6,16 @@ import '@shoelace-style/shoelace/dist/components/button/button.js';
 import '@shoelace-style/shoelace/dist/components/input/input.js';
 import '@shoelace-style/shoelace/dist/components/switch/switch.js';
 import { setBasePath } from '@shoelace-style/shoelace/dist/utilities/base-path.js';
-import { LookBandPress, lookTheme, type LookDialog, type LookGapMoveDetail, type LookTextDialog } from '../src/index.ts';
+import {
+  LookBandPress,
+  dividerSizeAt,
+  keepDivider,
+  keptDivider,
+  lookTheme,
+  type LookDialog,
+  type LookGapMoveDetail,
+  type LookTextDialog,
+} from '../src/index.ts';
 
 setBasePath('/node_modules/@shoelace-style/shoelace/dist');
 
@@ -20,6 +29,9 @@ const STORED = JSON.stringify(
   null,
   2,
 );
+
+// The left pane's size, kept over a reload.
+const LEFT_KEY = 'look.demo.left';
 
 @customElement('demo-pane')
 export class DemoPane extends LitElement {
@@ -90,10 +102,15 @@ export class DemoPane extends LitElement {
     `;
   }
 
+  override firstUpdated() {
+    const kept = keptDivider(LEFT_KEY);
+    if (kept !== null) this.panes.style.setProperty('--left', `${kept}px`);
+  }
+
   private resize(e: CustomEvent<LookGapMoveDetail>) {
-    const box = this.panes.getBoundingClientRect();
-    const left = Math.min(Math.max(e.detail.x - box.left, 80), box.width - 80);
+    const left = dividerSizeAt(this.panes.getBoundingClientRect(), e.detail, 'left', { least: 80, leaves: 80 });
     this.panes.style.setProperty('--left', `${left}px`);
+    keepDivider(LEFT_KEY, left);
   }
 
   private silence(e: Event) {

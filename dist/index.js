@@ -17,3 +17,4 @@ export { LookTextDialog } from "./look-text-dialog.js";
 export { LookGap } from "./look-gap.js";
 export { lookTheme } from "./theme.js";
 export { GAP_PX, NARROW_WIDTH_PX, TOKENS, TURN_HEIGHT_PX } from "./tokens.js";
+export { dividerSizeAt, keepDivider, keptDivider } from "./divider.js";

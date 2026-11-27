@@ -18,3 +18,4 @@ export { LookGap } from './look-gap.ts';
 export { lookTheme } from './theme.ts';
 export { GAP_PX, NARROW_WIDTH_PX, TOKENS, TURN_HEIGHT_PX } from './tokens.ts';
 export type { LookGapMoveDetail, LookPressDetail, LookPowerDetail, LookViewDetail, PowerShown, PowerState, } from './events.ts';
+export { dividerSizeAt, keepDivider, keptDivider, type Edge } from './divider.ts';
