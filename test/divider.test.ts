@@ -57,10 +57,16 @@ describe('keptDivider and keepDivider', () => {
     expect(keptDivider('test.left')).toBe(240);
   });
 
+  it('keptDivider is null where the kept value is not a number', () => {
+    localStorage.setItem('test.left', 'wide');
+    expect(keptDivider('test.left')).toBeNull();
+  });
+
   it('where the browser refuses the store, keptDivider is null and keepDivider does nothing', () => {
     const refused = () => {
       throw new DOMException('refused', 'SecurityError');
     };
+    keepDivider('test.left', 240);
     vi.spyOn(localStorage, 'getItem').mockImplementation(refused);
     vi.spyOn(localStorage, 'setItem').mockImplementation(refused);
     expect(() => keepDivider('test.left', 240)).not.toThrow();
