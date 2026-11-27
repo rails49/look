@@ -54,6 +54,10 @@ properties are in [`src/look-text-dialog.ts`](src/look-text-dialog.ts).
 `<look-gap>` is a gap a person drags between two parts of a work pane; it
 fires `look-gap-move` with the pointer's point and the caller sizes the
 parts. Its properties are in [`src/look-gap.ts`](src/look-gap.ts).
+`dividerSizeAt` turns that point into the size of one part, held to a least
+size and to what it leaves the other part; `keptDivider` and `keepDivider`
+read and write a size this browser keeps under a key. They are in
+[`src/divider.ts`](src/divider.ts).
 
 ## A test that presses
 
