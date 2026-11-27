@@ -67,7 +67,7 @@ export class DemoPane extends LitElement {
       }
 
       .panes > div:first-child {
-        width: var(--left, 240px);
+        width: clamp(80px, var(--left, 240px), calc(100% - 80px));
       }
 
       .panes > div:last-child {

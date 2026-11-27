@@ -6344,8 +6344,8 @@ function pn(t, e, o, r) {
 }
 function fn(t) {
   try {
-    const e = localStorage.getItem(t);
-    return e === null ? null : Number(e);
+    const e = Number(localStorage.getItem(t) ?? NaN);
+    return Number.isFinite(e) ? e : null;
   } catch {
     return null;
   }
